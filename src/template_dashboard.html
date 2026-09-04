@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>People Analytics TTE Brasil</title>
+  <style>
+    :root { --meli-yellow:#ffe600; --ink:#202124; --muted:#667085; --line:#dde1e6; --panel:#fff; --page:#f3f5f7; --blue:#123b66; --yellow:#b2b900; --black:#151515; --red:#bb3f36; --green:#21865a; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--page); color:var(--ink); font-family:Inter,Arial,sans-serif; }
+    header { background:var(--ink); color:white; padding:18px max(24px,calc((100vw - 1400px)/2)); border-bottom:6px solid var(--meli-yellow); }
+    h1 { margin:0; font-size:25px; } header p { margin:5px 0 0; color:#d7dce1; font-size:14px; }
+    main { max-width:1400px; margin:20px auto 38px; padding:0 20px; }
+    .scope-note { background:#fff8ce; border-left:4px solid var(--meli-yellow); border-radius:5px; padding:10px 14px; color:#554b00; font-size:13px; margin-bottom:14px; }
+    .filters, .chart-panel, .table-panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; box-shadow:0 1px 2px #00000008; }
+    .filters { display:grid; grid-template-columns:repeat(5,minmax(150px,1fr)); gap:12px; padding:15px; align-items:end; }
+    label { font-size:12px; font-weight:700; color:var(--muted); display:grid; gap:5px; } select { width:100%; border:1px solid #c8ced5; border-radius:6px; min-height:37px; padding:0 8px; background:#fff; color:var(--ink); }
+    button { border:0; border-radius:6px; background:var(--ink); color:#fff; min-height:37px; font-weight:700; cursor:pointer; }
+    .updated { text-align:right; font-size:12px; color:var(--muted); margin:12px 2px; }
+    .kpis { display:grid; grid-template-columns:repeat(7,1fr); gap:12px; } .kpi { min-height:110px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:13px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+    .kpi small { color:var(--muted); font-size:12px; } .kpi strong { font-size:25px; margin-top:5px; } .kpi span { color:var(--muted); font-size:12px; margin-top:3px; }
+    .dashboard-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; } .chart-panel { padding:16px; overflow:hidden; }
+    h2 { font-size:16px; margin:0 0 4px; } .chart-subtitle { font-size:12px; color:var(--muted); margin:0 0 13px; }
+    .legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; margin:4px 0 14px; } .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:4px; }
+    .bar-chart { height:300px; display:flex; align-items:end; gap:11px; padding:0 3px 24px; border-bottom:1px solid #aeb5bd; position:relative; }
+    .bar-group { flex:1; min-width:27px; height:100%; display:flex; flex-direction:column; justify-content:end; align-items:stretch; position:relative; } .stack { display:flex; flex-direction:column-reverse; min-height:1px; } .bar { min-height:0; display:grid; place-items:center; overflow:visible; } .bar-component-label { font-size:11px; font-weight:800; line-height:1; white-space:nowrap; text-shadow:0 1px 1px #00000035; } .bar-label { position:absolute; bottom:-21px; left:50%; transform:translateX(-50%) rotate(-35deg); white-space:nowrap; font-size:11px; color:#50565c; } .rate { position:absolute; left:50%; transform:translateX(-50%); font-size:11px; font-weight:800; white-space:nowrap; color:#32383e; }
+    .line-chart { height:300px; position:relative; border-bottom:1px solid #aeb5bd; } .line-chart svg { width:100%; height:100%; overflow:visible; } .line-label { font-size:11px; fill:#464b52; } .empty { height:245px; display:grid; place-items:center; color:var(--muted); font-size:14px; }
+    .table-panel { margin-top:16px; padding:16px; overflow:auto; } table { width:100%; border-collapse:collapse; font-size:13px; white-space:nowrap; } th { text-align:right; background:var(--ink); color:var(--meli-yellow); padding:10px; } th:first-child, td:first-child { text-align:left; } td { text-align:right; padding:9px 10px; border-bottom:1px solid var(--line); } tr:last-child td { border-bottom:0; }
+    @media(max-width:1100px){ .kpis{grid-template-columns:repeat(4,1fr)} .filters{grid-template-columns:repeat(3,1fr)} } @media(max-width:700px){ main{padding:0 12px}.filters,.kpis,.dashboard-grid{grid-template-columns:1fr 1fr}.filters button{grid-column:span 2}.dashboard-grid{display:block}.chart-panel{margin-top:14px}.kpi strong{font-size:21px} }
+  </style>
+</head>
+<body>
+<header><h1 id="dashboardTitle">People Analytics TTE Brasil</h1><p id="dashboardSubtitle"></p></header>
+<main>
+  <div class="scope-note">Primera versión con fuentes oficiales: no incluye targets ni dimensiones organizacionales sin una fuente validada.</div>
+  <section class="filters">
+    <label>Año<select id="yearFilter"></select></label>
+    <label>Mes<select id="monthFilter"><option value="all">Todos los meses</option></select></label>
+    <label>Región<select id="regionFilter"><option value="all">Todas las regiones</option></select></label>
+    <label>Tipo de operación<select id="operationFilter"><option value="all">Todos los tipos</option></select></label>
+    <label>Segmento<select id="segmentFilter"></select></label>
+    <button id="resetFiltersButton" type="button">Restablecer filtros</button>
+  </section>
+  <div class="updated" id="scopeDescription"></div>
+  <section class="kpis">
+    <article class="kpi"><small>HC promedio</small><strong id="averageHeadcount">—</strong><span>promedio mensual seleccionado</span></article>
+    <article class="kpi"><small>ABS Gestionable</small><strong id="manageableAbsenteeismRate">—</strong><span id="manageableAbsenteeismVolume">—</span></article>
+    <article class="kpi"><small>ABS No Gestionable</small><strong id="nonManageableAbsenteeismRate">—</strong><span id="nonManageableAbsenteeismVolume">—</span></article>
+    <article class="kpi"><small>ABS Total</small><strong id="totalAbsenteeismRate">—</strong><span id="scheduledWorkforce">—</span></article>
+    <article class="kpi"><small>Turn Over</small><strong id="turnoverRate">—</strong><span id="totalAttrition">—</span></article>
+    <article class="kpi"><small>Renuncia</small><strong id="resignationRate">—</strong><span id="resignations">—</span></article>
+    <article class="kpi"><small>Share CDBR</small><strong id="cdbrShare">—</strong><span>sobre HC directo</span></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="chart-panel"><h2>Ausentismo mensual</h2><p class="chart-subtitle">Gestionable, No gestionable y Otros / Dotación programada mensual</p><div class="legend"><span><i style="background:#123b66"></i>Gestionable</span><span><i style="background:#b2b900"></i>No gestionable</span><span><i style="background:#151515"></i>Otros</span></div><div class="bar-chart" id="absenteeismChart"></div></article>
+    <article class="chart-panel"><h2>Turn Over mensual</h2><p class="chart-subtitle">Renuncia, Abandono, Despido y No cuenta / HC mensual</p><div class="legend"><span><i style="background:#d5d9df"></i>Renuncia</span><span><i style="background:#aeb7c2"></i>Abandono</span><span><i style="background:#6d7886"></i>Despido</span><span><i style="background:#1d1d1d"></i>No cuenta</span></div><div class="bar-chart" id="turnoverChart"></div></article>
+  </section>
+  <section class="table-panel"><h2>Detalle mensual oficial</h2><p class="chart-subtitle">Valores nominales y tasas calculadas al aplicar los filtros.</p><table><thead><tr><th>Mes</th><th>HC</th><th>Dotación</th><th>Renuncias</th><th>Abandonos</th><th>Despidos</th><th>No cuenta</th><th>TO</th><th>ABS</th></tr></thead><tbody id="monthlyDetailsTable"></tbody></table></section>
+</main>
+<script>/* DASHBOARD_DATA_PLACEHOLDER */</script>
+<script>
+(() => {
+  const data = window.DASHBOARD_DATA;
+  const monthNames = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
+  const metricNames = ["headcount","hirings","resignations","dismissals","abandonments","not_counted_attrition","scheduled_workforce","manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"];
+  const element = id => document.getElementById(id);
+  const asNumber = number => new Intl.NumberFormat("es-BR", {maximumFractionDigits:0}).format(number || 0);
+  const percentage = ratio => Number.isFinite(ratio) ? `${(ratio * 100).toLocaleString("es-BR", {minimumFractionDigits:1, maximumFractionDigits:1})}%` : "—";
+  const escapeHtml = text => String(text).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));
+  const fillSelect = (select, values, labelForValue) => values.forEach(value => { const option = document.createElement("option"); option.value = value; option.textContent = labelForValue(value); select.append(option); });
+  function initialiseFilters() {
+    element("dashboardTitle").textContent = data.title; element("dashboardSubtitle").textContent = data.subtitle;
+    const years = [...new Set(data.cells.map(cell => cell.year))].sort(); fillSelect(element("yearFilter"), years, String); element("yearFilter").value = data.reportingYear;
+    fillSelect(element("monthFilter"), Array.from({length:12}, (_,index) => index + 1), month => `${monthNames[month - 1]} ${data.reportingYear}`);
+    fillSelect(element("regionFilter"), [...new Set(data.cells.map(cell => cell.region))].sort(), String);
+    fillSelect(element("operationFilter"), [...new Set(data.cells.map(cell => cell.operationType))].sort(), String);
+    fillSelect(element("segmentFilter"), data.segments, String); element("segmentFilter").value = "Total";
+    document.querySelectorAll("select").forEach(select => select.addEventListener("change", renderDashboard));
+    element("resetFiltersButton").addEventListener("click", () => { element("yearFilter").value=data.reportingYear; ["monthFilter","regionFilter","operationFilter"].forEach(id=>element(id).value="all"); element("segmentFilter").value="Total"; renderDashboard(); });
+  }
+  function selectedCells() {
+    const selectedYear = Number(element("yearFilter").value), selectedMonth = element("monthFilter").value, selectedRegion = element("regionFilter").value, selectedOperation = element("operationFilter").value, selectedSegment = element("segmentFilter").value;
+    return data.cells.filter(cell => cell.year === selectedYear && (selectedMonth === "all" || cell.month === Number(selectedMonth)) && (selectedRegion === "all" || cell.region === selectedRegion) && (selectedOperation === "all" || cell.operationType === selectedOperation) && (selectedSegment === "Total" || cell.segment === selectedSegment));
+  }
+  function aggregate(cells) { const totals = Object.fromEntries(metricNames.map(name => [name, 0])); cells.forEach(cell => metricNames.forEach(name => totals[name] += Number(cell[name] || 0))); return totals; }
+  function monthlyAggregates(cells) { return Array.from({length:12}, (_, index) => { const monthCells=cells.filter(cell=>cell.month===index+1); return {month:index+1, ...aggregate(monthCells)}; }).filter(row => row.headcount || row.scheduled_workforce || row.resignations || row.dismissals || row.abandonments); }
+  function rate(numerator, denominator) { return denominator ? numerator / denominator : NaN; }
+  function updateKpis(cells) {
+    const totals=aggregate(cells), months=[...new Set(cells.map(cell=>cell.month))], monthlyHeadcounts=months.map(month=>aggregate(cells.filter(cell=>cell.month===month)).headcount), averageHeadcount=monthlyHeadcounts.length ? monthlyHeadcounts.reduce((sum,value)=>sum+value,0)/monthlyHeadcounts.length : NaN;
+    const totalAbsence=totals.manageable_absenteeism+totals.non_manageable_absenteeism+totals.other_absenteeism, totalAttrition=totals.resignations+totals.dismissals+totals.abandonments+totals.not_counted_attrition;
+    element("averageHeadcount").textContent=Number.isFinite(averageHeadcount)?asNumber(averageHeadcount):"—";
+    element("manageableAbsenteeismRate").textContent=percentage(rate(totals.manageable_absenteeism,totals.scheduled_workforce)); element("manageableAbsenteeismVolume").textContent=asNumber(totals.manageable_absenteeism);
+    element("nonManageableAbsenteeismRate").textContent=percentage(rate(totals.non_manageable_absenteeism,totals.scheduled_workforce)); element("nonManageableAbsenteeismVolume").textContent=asNumber(totals.non_manageable_absenteeism);
+    element("totalAbsenteeismRate").textContent=percentage(rate(totalAbsence,totals.scheduled_workforce)); element("scheduledWorkforce").textContent=`Dotación: ${asNumber(totals.scheduled_workforce)}`;
+    element("turnoverRate").textContent=percentage(rate(totalAttrition,averageHeadcount)); element("totalAttrition").textContent=`Bajas: ${asNumber(totalAttrition)}`;
+    element("resignationRate").textContent=percentage(rate(totals.resignations,averageHeadcount)); element("resignations").textContent=asNumber(totals.resignations);
+    const directHeadcount=cells.filter(cell=>cell.segment!=="Externos").reduce((sum,cell)=>sum+cell.headcount,0), cdbrHeadcount=cells.filter(cell=>cell.segment==="Determinado (CDBR)").reduce((sum,cell)=>sum+cell.headcount,0); element("cdbrShare").textContent=percentage(rate(cdbrHeadcount,directHeadcount));
+  }
+  function renderStackedBars(containerId, rows, components, denominator, colors, labelFormatter) {
+    const container=element(containerId); if(!rows.length){container.innerHTML='<div class="empty">No hay datos para los filtros seleccionados.</div>';return;} const maxRate=Math.max(...rows.map(row=>components.reduce((sum,name)=>sum+row[name],0)/(row[denominator]||1)),.01);
+    const labelColors=colors.map(color=>["#d5d9df","#aeb7c2"].includes(color)?"#202124":"#ffffff");
+    container.innerHTML=rows.map(row=>{const total=components.reduce((sum,name)=>sum+row[name],0), totalRate=total/(row[denominator]||1); const bars=components.map((name,index)=>{const componentRate=row[name]/(row[denominator]||1), componentHeight=componentRate/maxRate*100, componentLabel=componentRate>0?`<span class="bar-component-label" style="color:${labelColors[index]}">${percentage(componentRate)}</span>`:""; return `<div class="bar" style="height:${componentHeight}%;background:${colors[index]}">${componentLabel}</div>`;}).join(""); return `<div class="bar-group"><span class="rate" style="bottom:${Math.min((totalRate/maxRate)*100+3,96)}%">${percentage(totalRate)}</span><div class="stack" style="height:${(totalRate/maxRate)*100}%">${bars}</div><span class="bar-label">${labelFormatter(row.month)}</span></div>`;}).join("");
+  }
+  function renderMonthlyTable(rows) { element("monthlyDetailsTable").innerHTML=rows.length?rows.map(row=>{const attrition=row.resignations+row.abandonments+row.dismissals+row.not_counted_attrition, absence=row.manageable_absenteeism+row.non_manageable_absenteeism+row.other_absenteeism; return `<tr><td>${monthNames[row.month-1]} ${data.reportingYear}</td><td>${asNumber(row.headcount)}</td><td>${asNumber(row.scheduled_workforce)}</td><td>${asNumber(row.resignations)}</td><td>${asNumber(row.abandonments)}</td><td>${asNumber(row.dismissals)}</td><td>${asNumber(row.not_counted_attrition)}</td><td>${percentage(rate(attrition,row.headcount))}</td><td>${percentage(rate(absence,row.scheduled_workforce))}</td></tr>`;}).join(""):'<tr><td colspan="9">No hay datos para los filtros seleccionados.</td></tr>'; }
+  function renderDashboard() { const cells=selectedCells(), rows=monthlyAggregates(cells); updateKpis(cells); renderStackedBars("absenteeismChart",rows,["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"],"scheduled_workforce",["#123b66","#b2b900","#151515"],month=>monthNames[month-1]); renderStackedBars("turnoverChart",rows,["resignations","abandonments","dismissals","not_counted_attrition"],"headcount",["#d5d9df","#aeb7c2","#6d7886","#1d1d1d"],month=>monthNames[month-1]); renderMonthlyTable(rows); element("scopeDescription").textContent=`Brasil · ${cells.length} celdas agregadas · ${element("segmentFilter").value} · ${element("monthFilter").value === "all" ? "Todos los meses" : monthNames[Number(element("monthFilter").value)-1]}`; }
+  initialiseFilters(); renderDashboard();
+})();
+</script>
+</body></html>

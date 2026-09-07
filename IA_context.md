@@ -1,6 +1,6 @@
 # IA_context.md — People Analytics TTE Brasil
 
-> Estado del documento: 2026-09-04  
+> Estado del documento: 2026-09-05  
 > Alcance: primera versión del dashboard HTML de Ausentismo y Turn Over para Shipping Brasil.
 
 Este documento permite continuar el proyecto sin asumir fuentes, reglas o métricas que no estén respaldadas por la implementación y los datos oficiales actuales. Una instrucción explícita y posterior del usuario siempre prevalece sobre este contexto.
@@ -87,7 +87,7 @@ Cada consulta está parametrizada. `data_loader.py` fija un máximo de 160 GB fa
 
 El grano del cubo publicado al navegador es:
 
-`año × mes × segmento × región × tipo_de_operación`
+`año × mes × segmento × región × tipo_de_operación × site × área × subárea`
 
 Cada celda conserva solamente métricas aditivas. Las tasas se calculan después de filtrar, en JavaScript, para evitar promedios incorrectos de porcentajes.
 
@@ -135,7 +135,10 @@ Filtros actualmente disponibles:
 - Mes.
 - Región.
 - Tipo de operación.
+- Site operativo, normalizado como `UPPER(TRIM(Ubicacion__Nombre))` en Nómina/Externos y `UPPER(TRIM(ubicacion))` en Ausentismo.
 - Segmento: Total, Determinado (CDBR), Indeterminado o Externos.
+- Tipo de baja multiselección: Renuncia, Abandono, Despido y No cuenta.
+- Tipo de ausentismo multiselección: Gestionable, No gestionable y Otros.
 
 Contenido:
 
@@ -143,7 +146,10 @@ Contenido:
 - Barras apiladas de Ausentismo mensual: Gestionable, No gestionable y Otros.
 - Barras apiladas de Turn Over mensual: Renuncia, Abandono, Despido y No cuenta.
 - Etiqueta de porcentaje en cada componente distinto de cero y tasa total arriba de la barra, siguiendo la lectura del Looker TTE Brasil.
-- Tabla mensual de detalle nominal y tasas.
+- Comparativos mensuales CDBR vs. No CDBR para Ausentismo Gestionable y Turnover (Renuncia, Abandono y Despido).
+- Gráfica de líneas de Ausentismo por los cuatro principales motivos.
+- Gráfica de líneas de Turnover por Tipo de baja, con colores estables: Despido verde oliva y Renuncia azul oscuro.
+- Las gráficas de detalle sólo muestran meses con datos disponibles; no dibujan futuros meses como cero.
 
 ## 9. Fuera de alcance por ahora
 
@@ -152,7 +158,7 @@ No se deben agregar hasta identificar y validar una fuente, un grano temporal y 
 - Director, Gerente, N3 y Tier 4–6.
 - PBP, PCD y Localidade.
 - INSS como filtro independiente.
-- Campaña, Área, Subárea, Cargo, Seniority y Status.
+- Campaña, Cargo, Seniority y Status.
 - `TO Meta ACM` u otro target de Turn Over.
 
 La ausencia de estos campos en el HTML actual no demuestra que no existan en alguna tabla. Demuestra únicamente que aún no están incorporados al contrato de datos oficial de este proyecto.
@@ -203,3 +209,13 @@ Cuando el usuario comparta las tablas, fuentes Looker, SQL, LookML o campos calc
 4. Medir el impacto sobre HC, bajas, dotación y tasas antes y después del join.
 5. Añadir el campo a configuración, consulta, cubo, filtro e interfaz en una misma entrega.
 
+
+## 13. Hallazgo crítico de homologación: Turnover
+
+La comparación con la referencia del dashboard Centralizado/Monthly People Planning muestra que el Turnover no está homologado todavía. Con TTE y Renuncia + Despido, el dashboard local calcula enero 2026 como `911 / 13,324 = 6.84%`, mientras la referencia visual es cercana a 8.0%, cuyo denominador implícito se aproxima a 7.9k.
+
+No se debe consolidar la métrica hasta confirmar la definición Centralizado: población de HC, fecha/corte del denominador, tipos de baja incluidos y exclusiones. El detalle vivo de evidencias, hipótesis y próximos pasos está en `Analysisi_Homologacion.md`.
+
+## 14. Objetivo de homologación
+
+El objetivo final es disponer de un único dashboard con una sola versión trazable de la información para TTE Brasil y Centralizado, sin perder las dimensiones y granularidad requeridas por la operación local. Toda diferencia deberá cerrarse con fuente, numerador, denominador, población, período y regla de exclusión documentados.

@@ -8,7 +8,7 @@ from pathlib import Path
 
 from builders import write_dashboard_html
 from data_loader import DASHBOARD_CONFIGURATION, load_source_results_from_bigquery, load_source_results_from_json
-from processors import compile_monthly_dashboard_cube
+from processors import compile_monthly_dashboard_cube, compile_monthly_reason_series
 
 PROJECT_ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
 
@@ -31,7 +31,8 @@ def main() -> None:
         raise ValueError("--last-month debe estar entre 1 y 12.")
     source_results = load_source_results_from_json(arguments.source_results_json) if arguments.source_results_json else load_source_results_from_bigquery(arguments.year, arguments.last_month)
     monthly_cube_cells = compile_monthly_dashboard_cube(source_results)
-    write_dashboard_html(monthly_cube_cells, arguments.output_html, arguments.year, arguments.last_month)
+    reason_cells = compile_monthly_reason_series(source_results)
+    write_dashboard_html(monthly_cube_cells, reason_cells, arguments.output_html, arguments.year, arguments.last_month)
     print(f"Dashboard generado: {arguments.output_html}")
 
 

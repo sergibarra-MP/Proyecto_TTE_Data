@@ -11,7 +11,7 @@ from data_loader import DASHBOARD_CONFIGURATION
 HTML_TEMPLATE_PATH = Path(__file__).resolve().parent / "template_dashboard.html"
 
 
-def write_dashboard_html(monthly_cube_cells: list[dict[str, Any]], output_html_path: Path, reporting_year: int, last_calendar_month: int) -> None:
+def write_dashboard_html(monthly_cube_cells: list[dict[str, Any]], reason_cells: list[dict[str, Any]], output_html_path: Path, reporting_year: int, last_calendar_month: int) -> None:
     """Inserta sólo datos agregados y configuración visual necesaria para el navegador."""
     dashboard_payload = {
         "title": DASHBOARD_CONFIGURATION["dashboard"]["title"],
@@ -21,6 +21,7 @@ def write_dashboard_html(monthly_cube_cells: list[dict[str, Any]], output_html_p
         "lastCalendarMonth": last_calendar_month,
         "segments": ["Total", "Determinado (CDBR)", "Indeterminado", "Externos"],
         "cells": monthly_cube_cells,
+        "reasonCells": reason_cells,
     }
     serialized_payload = json.dumps(dashboard_payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     template_contents = HTML_TEMPLATE_PATH.read_text(encoding="utf-8")

@@ -43,7 +43,8 @@ def build_official_source_queries() -> dict[str, str]:
     return {
         "direct_headcount_and_attrition": f"""SELECT
   source.Ano AS year, source.Mes AS month, source.Agrupador_1 AS source_group,
-  location_catalog.Region AS region, location_catalog.Site AS operation_type,
+  UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, location_catalog.Region AS region,
+  location_catalog.Site AS operation_type,
   source.Tipo AS record_type, source.tipoBaja_PP AS attrition_type,
   source.motivosDeSalida AS attrition_reason,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
@@ -55,12 +56,12 @@ WHERE {common_month_window}
   AND source.Agrupador_1 IN UNNEST(@direct_source_groups)
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5,6,7,8""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
         "direct_hirings": f"""SELECT
   EXTRACT(YEAR FROM source.Datos_Laborales_Fecha_de_contratacion) AS year,
   EXTRACT(MONTH FROM source.Datos_Laborales_Fecha_de_contratacion) AS month,
-  source.Agrupador_1 AS source_group, location_catalog.Region AS region,
-  location_catalog.Site AS operation_type,
+  source.Agrupador_1 AS source_group, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea,
+  location_catalog.Region AS region, location_catalog.Site AS operation_type,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
 FROM `{TABLES['payroll']}` AS source
 {location_join_for_payroll}
@@ -70,10 +71,10 @@ WHERE source.Pais_Region = @country_name
   AND EXTRACT(YEAR FROM source.Datos_Laborales_Fecha_de_contratacion) = @reporting_year
   AND EXTRACT(MONTH FROM source.Datos_Laborales_Fecha_de_contratacion) BETWEEN 1 AND @last_calendar_month
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5""",
+GROUP BY 1,2,3,4,5,6,7,8""",
         "external_headcount_and_attrition": f"""SELECT
-  source.Ano AS year, source.Mes AS month, location_catalog.Region AS region,
-  location_catalog.Site AS operation_type, source.Tipo AS record_type,
+  source.Ano AS year, source.Mes AS month, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea,
+  location_catalog.Region AS region, location_catalog.Site AS operation_type, source.Tipo AS record_type,
   source.tipoBaja AS attrition_type, source.motivosDeSalida AS attrition_reason,
   COUNT(*) AS value
 FROM `{TABLES['external_workforce']}` AS source
@@ -83,11 +84,11 @@ WHERE {common_month_window}
   AND source.Agrupador_1 = @external_source_group
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5,6,7""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10""",
         "absenteeism": f"""SELECT
   source.Ano AS year, source.Mes AS month, source.Agrupador_1 AS source_group,
-  source.colaborador_externo AS external_employee, location_catalog.Region AS region,
-  CASE WHEN source.CAT_TA = 'No MAP' AND UPPER(TRIM(source.ubicacion)) IN ('BRES01', 'BRPR01') THEN 'Full'
+  source.colaborador_externo AS external_employee, UPPER(TRIM(source.ubicacion)) AS site_operativo, source.Area AS area, source.Subarea AS subarea,
+  location_catalog.Region AS region, CASE WHEN source.CAT_TA = 'No MAP' AND UPPER(TRIM(source.ubicacion)) IN ('BRES01', 'BRPR01') THEN 'Full'
        ELSE source.CAT_TA END AS operation_type,
   source.Motivo_ausentismo AS absenteeism_reason,
   SUM(source.Dotacion_programada) AS scheduled_workforce,
@@ -102,7 +103,7 @@ WHERE {common_month_window}
   AND source.CAT_TA NOT IN UNNEST(@excluded_operational_categories)
   AND UPPER(TRIM(source.ubicacion)) NOT IN UNNEST(@excluded_location_names)
   AND (source.colaborador_externo = @external_employee_flag OR source.Agrupador_1 IN UNNEST(@direct_source_groups))
-GROUP BY 1,2,3,4,5,6,7""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10""",
     }
 
 

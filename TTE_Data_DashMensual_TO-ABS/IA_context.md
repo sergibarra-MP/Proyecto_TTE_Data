@@ -65,9 +65,11 @@ Proyecto de facturación: `meli-people`.
 
 | Fuente | Tabla | Uso actual | Precaución |
 |---|---|---|---|
-| Fuerza laboral y bajas | `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL` | HC, bajas e ingresos de Directos y Externos. | Directos Brasil validados contra Nómina Shipping para 2024–2026; Externos sin PBP informado. |
-| Ausentismo oficial | `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS` | Dotación programada y ausentismo por tipo. | Mantener sus exclusiones de negocio. |
+| Fuerza laboral y bajas | `NOMINA_ALL` (`meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL`) | HC, bajas e ingresos de Directos y Externos. | Directos Brasil validados contra Nómina Shipping para 2024–2026; Externos sin PBP informado. |
+| Ausentismo oficial | `HYPER_ABS` (`meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS`) | Dotación programada y ausentismo por tipo. | Mantener sus exclusiones de negocio. |
 | Catálogo de ubicaciones | `meli-people.SILVER_PE_SHIPPING.TTE_REG_CLASSIFICADOR` | Región y Tipo de operación/Site. | No inferir dimensiones para ubicaciones sin mapeo. |
+
+Convención terminológica del proyecto: `NOMINA_ALL` es el alias funcional de `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL`. El nombre físico sólo se conserva en la configuración y cuando sea necesario para trazabilidad técnica.
 
 Cada consulta está parametrizada. `data_loader.py` fija un máximo de 160 GB facturables por consulta como protección preventiva de costo.
 
@@ -79,8 +81,8 @@ Cada consulta está parametrizada. `data_loader.py` fija un máximo de 160 GB fa
 
 | Segmento dashboard | Campo fuente / regla |
 |---|---|
-| `Determinado (CDBR)` | KPI/Ausentismo con `Agrupador_1 = 'Representantes - CDBR'`. |
-| `Indeterminado` | KPI/Ausentismo con `Agrupador_1 = 'Representante'` y no externo. |
+| `Determinado (CDBR)` | NOMINA_ALL/HYPER_ABS con `Agrupador_1 = 'Representantes - CDBR'`. |
+| `Indeterminado` | NOMINA_ALL/HYPER_ABS con `Agrupador_1 = 'Representante'` y no externo. |
 | `Externos` | Fuente de Externos; en Ausentismo, `colaborador_externo = 'Si'`. |
 | `Total` | Agregación en el navegador de los tres segmentos anteriores. No es una fila duplicada del cubo. |
 
@@ -96,7 +98,7 @@ Cada celda conserva solamente métricas aditivas. Las tasas se calculan después
 
 - Tipos publicados: `Renuncia`, `Despido`, `Abandono de empleo` y `No cuenta`.
 - Se excluye `No cuenta` cuando `motivosDeSalida = 'Sin Especificar'`.
-- Las bajas de Directos y Externos provienen de `KPI_LATAM_NC_TO_ALL`; se utiliza `tipoBaja`.
+- Las bajas de Directos y Externos provienen de `NOMINA_ALL` (tabla física `KPI_LATAM_NC_TO_ALL`); se utiliza `tipoBaja`.
 
 ### Ausentismo
 
@@ -134,10 +136,10 @@ Filtros actualmente disponibles:
 - Mes.
 - Región.
 - Tipo de operación.
-- Site operativo, normalizado como `UPPER(TRIM(Ubicacion__Nombre))` en KPI y `UPPER(TRIM(ubicacion))` en Ausentismo.
+- Site operativo, normalizado como `UPPER(TRIM(Ubicacion__Nombre))` en NOMINA_ALL y `UPPER(TRIM(ubicacion))` en HYPER_ABS.
 - PBP, normalizado desde el campo oficial de cada fuente; los valores vacíos se publican como `Sin PBP informado`.
 - PCD, normalizado desde `Posee_Discapacidad` en Nómina/Turnover y Ausentismo; los valores vacíos se publican como `Sin PCD informado`.
-- Supervisor, homologado como login: Nómina/Turnover resuelve `ID_de_sistema_del_usuario_lider` contra `ID_de_usuario_empleado → Nombre_de_usuario` dentro de `KPI_LATAM_NC_TO_ALL`; Ausentismo utiliza `Supervisor`. Externos sin cobertura común se publican como `Sin Supervisor informado`.
+- Supervisor, homologado como login: NOMINA_ALL resuelve `ID_de_sistema_del_usuario_lider` contra `ID_de_usuario_empleado → Nombre_de_usuario` dentro de NOMINA_ALL (tabla física `KPI_LATAM_NC_TO_ALL`); Ausentismo utiliza `Supervisor`. Externos sin cobertura común se publican como `Sin Supervisor informado`.
 - Segmento: Total, Determinado (CDBR), Indeterminado o Externos.
 - Tipo de baja multiselección: Renuncia, Abandono, Despido y No cuenta.
 - Tipo de ausentismo multiselección: Gestionable, No gestionable y Otros.
@@ -185,7 +187,7 @@ Generar desde una extracción JSON para pruebas reproducibles:
   --source-results-json tests\fixtures\source_results_example.json
 ```
 
-La corrida oficial posterior a la migración a KPI realizada el 2026-09-07 generó 13,821 celdas agregadas para Brasil con meses disponibles de enero a septiembre de 2026. Un warning de ADC sin quota project puede aparecer; sólo requiere atención si BigQuery devuelve error de cuota o API.
+La corrida oficial posterior a la migración a NOMINA_ALL realizada el 2026-09-07 generó 13,821 celdas agregadas para Brasil con meses disponibles de enero a septiembre de 2026. Un warning de ADC sin quota project puede aparecer; sólo requiere atención si BigQuery devuelve error de cuota o API.
 
 ## 11. Validaciones antes de publicar
 
@@ -217,7 +219,7 @@ No se debe consolidar la métrica hasta confirmar la definición Centralizado: p
 El objetivo final es disponer de un único dashboard con una sola versión trazable de la información para TTE Brasil y Centralizado, sin perder las dimensiones y granularidad requeridas por la operación local. Toda diferencia deberá cerrarse con fuente, numerador, denominador, población, período y regla de exclusión documentados.
 ## 15. Migración a fuente única para fuerza laboral y bajas
 
-Desde 2026-09-07, HC, bajas e ingresos usan únicamente KPI_LATAM_NC_TO_ALL para Directos y Externos. La equivalencia de Directos contra Nómina Shipping fue validada por llave Año × Mes × Tipo × Agrupador_1 × ID en 2024–2026, sin registros exclusivos ni diferencias en Área, Subárea, ubicación, PBP, fecha de contratación o clasificación de bajas. Nómina queda fuera del flujo productivo y sólo puede consultarse como referencia de homologación o para historia previa a 2024.
+Desde 2026-09-07, HC, bajas e ingresos usan únicamente NOMINA_ALL (tabla física `KPI_LATAM_NC_TO_ALL`) para Directos y Externos. La equivalencia de Directos contra Nómina Shipping fue validada por llave Año × Mes × Tipo × Agrupador_1 × ID en 2024–2026, sin registros exclusivos ni diferencias en Área, Subárea, ubicación, PBP, fecha de contratación o clasificación de bajas. Nómina queda fuera del flujo productivo y sólo puede consultarse como referencia de homologación o para historia previa a 2024.
 
 ## 16. Segunda vista: Overview_ABS-TO_TeamTTE
 
@@ -301,3 +303,75 @@ La generación productiva multianual es:
 ```powershell
 .\.venv\Scripts\python.exe src\gen_dashboard.py --first-year 2024 --year 2026 --last-month 9
 ```
+## 17. Tercera vista: Overview_ABS-TO_Homologado+TTE
+
+Esta vista experimental conserva como fuentes métricas exclusivas:
+
+- `NOMINA_ALL` (tabla física `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL`) para HC, altas y bajas.
+- `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS` para dotación y ausentismo.
+
+`meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER` se usa únicamente para enriquecer dimensiones. No aporta ni sustituye numeradores o denominadores oficiales.
+
+### 17.1 Llaves y temporalidad
+
+| Familia oficial | Llave hacia TTE | Regla temporal |
+|---|---|---|
+| HC | `ID_de_usuario_empleado = consumer_id` + Año/Mes | Último registro TTE disponible de la persona dentro del mes. |
+| Altas | `ID_de_usuario_empleado = consumer_id` | Fecha de contratación = `data_completa`. |
+| Bajas | `ID_de_usuario_empleado = consumer_id` | Fecha de terminación = `data_completa`. |
+| Ausentismo | `NK_Dim_Empleado = consumer_id` | `Dia = data_completa`. |
+| Externos | Sin llave regional validada | Se conservan como `Sin cobertura TTE`. |
+
+Todos los cruces son `LEFT JOIN`. La llave diaria `data_completa × consumer_id` fue validada como única. Para HC se aplica `ROW_NUMBER()` y se elige la fecha más reciente del mes para impedir relaciones muchos-a-muchos cuando una persona cambia de dimensión.
+
+### 17.2 Dimensiones añadidas
+
+Campaña, Director, Gerente, N3, Región TTE, Tier 4, Tier 5, Tier 6, Localidade, Cargo, Seniority, Status e INSS. La `Región homologada` existente no se sustituye; coexiste con `Región TTE` para permitir reconciliación.
+
+Los controles de fuente centralizada se muestran en azul tenue y los de origen TTE en amarillo tenue. `Cobertura TTE` permite separar `Con cobertura TTE` y `Sin cobertura TTE`. Por defecto se incluyen ambos estados, de modo que abrir la pestaña no altera los totales oficiales.
+
+### 17.3 Validaciones al corte 2026-09
+
+- 162.619 celdas métricas enriquecidas y 373.394 celdas de motivos.
+- Cero diferencias frente a la pestaña homologada al reagrupar las diez métricas por Año × Mes × Segmento.
+- Cero diferencias en los motivos de ausentismo y de baja al reagruparlos sin dimensiones TTE.
+- Cobertura descriptiva TTE: 34,5% del HC acumulado, 25,2% de la dotación programada, 23,3% del ausentismo gestionable, 21,4% de renuncias y 22,6% de despidos.
+
+La cobertura parcial no es un error del `LEFT JOIN`; expresa que la tabla regional no cubre toda la población de las fuentes centrales. Aplicar un filtro TTE sí restringe el universo a los registros vinculados o a la categoría explícita elegida.
+
+### 17.4 Módulos
+
+- `src/homologated_tte_enrichment_loader.py`: SQL y reglas de cruce temporal.
+- `src/homologated_tte_enrichment_processors.py`: contrato dimensional y cubo aditivo enriquecido.
+- `tests/test_homologated_tte_enrichment.py`: regresiones sobre `LEFT JOIN`, temporalidad, coexistencia de regiones y conservación de métricas sin match.
+### 17.5 Rendimiento del HTML
+
+El HTML productivo pesa aproximadamente 41,17 MB porque incluye tres payloads comprimidos e independientes: Homologado 7,29 MB, Team TTE 13,43 MB y Homologado+TTE 20,36 MB en Base64. Mantenerlos embebidos es el costo de entregar un solo archivo portable para Grid.
+
+Para evitar que el navegador convierta ese peso en bloqueos de interfaz se aplicaron estas reglas:
+
+- Sólo la vista Homologada se descomprime al abrir el archivo; Team TTE y Homologado+TTE usan inicialización diferida al seleccionar su pestaña.
+- Cada pestaña pesada se inicializa una sola vez y conserva su promesa de carga.
+- Los filtros son dependientes entre sí: cada catálogo muestra únicamente valores compatibles con las demás selecciones activas. Los resultados se cachean por combinación de filtros y los controles desactualizados se recalculan al abrirlos, conservando selección múltiple, búsqueda y rendimiento.
+- Cambiar un filtro reconstruye únicamente ese control, no todos los controles de la pestaña.
+- El motor evalúa sólo filtros con selección explícita; `Todos seleccionados` no añade comparaciones por fila.
+- Las celdas métricas filtradas se reutilizan en KPIs, barras y denominadores de motivos, evitando repetir la misma selección completa.
+
+Estas optimizaciones no modifican payloads, métricas ni resultados; reducen trabajo de CPU y memoria en el navegador. Si el límite de tamaño de Grid exige una reducción adicional, el siguiente paso arquitectónico sería un contrato columnar/diccionario o payloads externos bajo demanda, sujeto a confirmar qué recursos admite Grid.
+### 17.6 Ampliación controlada a los 12 Seniorities TTE
+
+La vista Homologado+TTE publica las 12 categorías observadas en la fuente regional. NOMINA_ALL contiene correspondencias reales para todas ellas y `Agrupador_1` coincide exactamente con el `seniority` TTE. Los grupos adicionales sólo entran cuando existe match persona-periodo y ambos campos son idénticos; quedan agrupados en el segmento técnico `Otros Seniorities TTE`.
+
+La selección inicial del filtro Seniority incluye `Non CDBR`, `Representantes - CDBR`, `Sin cobertura TTE` y `Sin Seniority informado`. Esta combinación preserva exactamente el universo de la vista Homologada; las otras diez categorías quedan disponibles para selección explícita.
+
+HYPER_ABS sólo presentó correspondencias para `Non CDBR` y `Representantes - CDBR`. Por ello, los Seniorities adicionales tienen HC, altas y bajas de NOMINA_ALL, pero no dotación ni ausentismo. No se completa ese vacío con ceros inferidos ni con métricas de la tabla regional.
+
+La validación productiva confirmó 12 opciones y cero diferencias en la selección inicial contra las diez métricas homologadas por Año × Mes × Segmento.
+### 17.7 Exclusión de Melicidade
+
+`Melicidade` no pertenece al alcance acordado. Se agregó a `business_rules.operational_categories_to_exclude` y se excluye en el origen de todas las métricas oficiales:
+
+- NOMINA_ALL: `TTE_REG_CLASSIFICADOR.Site != 'Melicidade'` para HC, altas y bajas, tanto directos como externos.
+- HYPER_ABS: `CAT_TA != 'Melicidade'` para dotación y ausentismo.
+
+La regla se aplica por igual a Homologado y Homologado+TTE; no es un ocultamiento de la opción en HTML. La regeneración 2026-09 confirmó cero celdas `operationType = Melicidade`. La vista Homologada no cambió métricas porque ya no contenía población métrica de esa categoría; la ampliación de Seniorities en Homologado+TTE sí redujo el cubo de 175.308 a 173.800 celdas. `EXT` permanece como categoría independiente del clasificador y no forma parte de esta exclusión.

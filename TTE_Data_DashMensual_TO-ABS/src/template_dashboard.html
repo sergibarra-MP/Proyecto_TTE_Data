@@ -33,7 +33,7 @@
     .scope-note { background:#fff8ce; border-left:4px solid var(--meli-yellow); border-radius:5px; padding:10px 14px; color:#554b00; font-size:13px; margin-bottom:14px; }
     .filters, .chart-panel, .table-panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; box-shadow:0 1px 2px #00000008; }
     .filters { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; padding:15px; align-items:end; }
-    .filters > #resetFiltersButton { grid-column:1 / -1; width:min(210px,100%); }
+    .filters > #resetFiltersButton, .filters > #homologatedTteResetFiltersButton { grid-column:1 / -1; width:min(210px,100%); }
     label { min-width:0; font-size:12px; font-weight:700; color:var(--muted); display:grid; gap:5px; } select { width:100%; min-width:0; border:1px solid #c8ced5; border-radius:6px; min-height:37px; padding:0 8px; background:#fff; color:var(--ink); }
     button { border:0; border-radius:6px; background:var(--ink); color:#fff; min-height:37px; font-weight:700; cursor:pointer; } .multi-filter { font-size:12px; font-weight:700; color:var(--muted); display:grid; gap:5px; min-width:0; } .multi-select { position:relative; } .multi-select summary { list-style:none; min-height:37px; padding:9px 32px 9px 8px; border:1px solid #c8ced5; border-radius:6px; background:#fff; color:var(--ink); font-weight:400; cursor:pointer; position:relative; } .multi-select summary::-webkit-details-marker { display:none; } .multi-select summary::after { content:"▼"; position:absolute; right:10px; color:#667085; font-size:10px; } .multi-select[open] summary { border-bottom-left-radius:0; border-bottom-right-radius:0; } .multi-select-options { position:absolute; z-index:5; top:100%; left:0; min-width:100%; width:max-content; max-width:280px; padding:8px 0; background:#fff; border:1px solid #c8ced5; border-radius:0 0 6px 6px; box-shadow:0 8px 18px #00000022; } .multi-select-options label { display:flex; grid-template-columns:none; align-items:center; gap:6px; padding:7px 10px; font-size:12px; color:#344054; cursor:pointer; } .multi-select-options label:hover { background:#f3f5f7; } .multi-select-options input { accent-color:#123b66; }
     .filter-provenance-legend { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding:2px 0 1px; color:#475467; font-size:12px; }
@@ -67,6 +67,7 @@
 <nav class="dashboard-view-tabs" aria-label="Vistas del dashboard">
   <button class="dashboard-view-tab" type="button" data-dashboard-view="homologatedDashboardView" aria-selected="true">Overview_ABS-TO_Homologado</button>
   <button class="dashboard-view-tab" type="button" data-dashboard-view="teamTteDashboardView" aria-selected="false">Overview_ABS-TO_TeamTTE</button>
+  <button class="dashboard-view-tab" type="button" data-dashboard-view="homologatedTteDashboardView" aria-selected="false">Overview_ABS-TO_Homologado+TTE</button>
 </nav>
 <main id="homologatedDashboardView" class="dashboard-view">
   <div class="scope-note">Vista homologada con fuentes centralizadas oficiales; sus cálculos permanecen independientes de la fuente regional Team TTE.</div>
@@ -130,6 +131,30 @@
     <article class="chart-panel"><h2>Turnover - Motivos</h2><p class="chart-subtitle">Despido y Renuncia / personas distintas mensuales</p><div class="legend" id="teamTteTurnoverReasonLegend"></div><div class="line-chart" id="teamTteTurnoverReasonChart"></div></article>
   </section>
 </main>
+<main id="homologatedTteDashboardView" class="dashboard-view" hidden>
+  <div class="scope-note">Vista experimental: métricas oficiales enriquecidas con Team TTE mediante LEFT JOIN. Los 12 Seniorities están disponibles: los adicionales muestran HC/TO cuando coinciden con NOMINA_ALL; HYPER_ABS sólo presenta cobertura para Non CDBR y Representantes - CDBR.</div>
+  <section class="filters" aria-label="Filtros del dashboard">
+    <div class="filter-provenance-legend" aria-label="Origen de filtros"><strong>Origen de filtros:</strong><span class="filter-provenance-item"><i class="filter-provenance-swatch centralized"></i>Fuente centralizada homologada</span><span class="filter-provenance-item"><i class="filter-provenance-swatch regional"></i>Dimensión regional Team TTE</span></div>
+    <div class="filter-host" data-enriched-filter-id="homologatedTteYearFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteMonthFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteRegionFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteAreaFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteSubareaFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteOperationFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteAttritionType"></div><div class="filter-host" data-enriched-filter-id="homologatedTteSiteFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTtePbpFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTtePcdFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteSupervisorFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteSegmentFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteAbsenceType"></div>
+    <div class="filter-host" data-enriched-filter-id="homologatedTteCoverageFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteCampaignFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteDirectorFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteManagerFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteN3Filter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteRegionalRegionFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteTier4Filter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteTier5Filter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteTier6Filter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteLocationFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteRoleFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteSeniorityFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteStatusFilter"></div><div class="filter-host" data-enriched-filter-id="homologatedTteInssFilter"></div>
+    <button id="homologatedTteResetFiltersButton" type="button">Restablecer filtros</button>
+  </section>
+  <div class="updated" id="homologatedTteScopeDescription"></div>
+  <section class="kpis">
+    <article class="kpi"><small>HC promedio</small><strong id="homologatedTteAverageHeadcount">—</strong><span>promedio mensual seleccionado</span></article>
+    <article class="kpi"><small>ABS Gestionable</small><strong id="homologatedTteManageableAbsenteeismRate">—</strong><span id="homologatedTteManageableAbsenteeismVolume">—</span></article>
+    <article class="kpi"><small>ABS No Gestionable</small><strong id="homologatedTteNonManageableAbsenteeismRate">—</strong><span id="homologatedTteNonManageableAbsenteeismVolume">—</span></article>
+    <article class="kpi"><small>ABS Total</small><strong id="homologatedTteTotalAbsenteeismRate">—</strong><span id="homologatedTteScheduledWorkforce">—</span></article>
+    <article class="kpi"><small>Turn Over</small><strong id="homologatedTteTurnoverRate">—</strong><span id="homologatedTteTotalAttrition">—</span></article>
+    <article class="kpi"><small>Renuncia</small><strong id="homologatedTteResignationRate">—</strong><span id="homologatedTteResignations">—</span></article>
+    <article class="kpi"><small>Share CDBR</small><strong id="homologatedTteCdbrShare">—</strong><span>sobre HC directo</span></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="chart-panel"><h2>Ausentismo mensual</h2><p class="chart-subtitle">Gestionable, No gestionable y Otros / Dotación programada mensual</p><div class="legend"><span><i style="background:#123b66"></i>Gestionable</span><span><i style="background:#b2b900"></i>No gestionable</span><span><i style="background:#151515"></i>Otros</span></div><div class="bar-chart" id="homologatedTteAbsenteeismChart"></div></article>
+    <article class="chart-panel"><h2>Turn Over mensual</h2><p class="chart-subtitle">Renuncia, Abandono, Despido y No cuenta / HC mensual</p><div class="legend"><span><i style="background:#d5d9df"></i>Renuncia</span><span><i style="background:#aeb7c2"></i>Abandono</span><span><i style="background:#6d7886"></i>Despido</span><span><i style="background:#1d1d1d"></i>No cuenta</span></div><div class="bar-chart" id="homologatedTteTurnoverChart"></div></article>
+  </section>
+  <section class="dashboard-grid comparison-grid"><article class="chart-panel"><h2>Ausentismo gestionable</h2><p class="chart-subtitle">Tasa mensual por población / Dotación programada</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>No CDBR</span></div><div class="bar-chart" id="homologatedTteAbsenteeismComparisonChart"></div></article><article class="chart-panel"><h2>Turnover</h2><p class="chart-subtitle">Renuncia, Abandono y Despido / HC mensual</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>No CDBR</span></div><div class="bar-chart" id="homologatedTteTurnoverComparisonChart"></div></article></section>
+  <section class="dashboard-grid comparison-grid"><article class="chart-panel"><h2>Ausentismo - Motivos</h2><p class="chart-subtitle">Top 4 motivos por tasa mensual</p><div class="legend" id="homologatedTteAbsenceReasonsLegend"></div><div class="line-chart" id="homologatedTteAbsenceReasonsChart"></div></article><article class="chart-panel"><h2>Turnover - Tipo de baja</h2><p class="chart-subtitle">Tasa mensual por tipo de baja</p><div class="legend" id="homologatedTteAttritionReasonsLegend"></div><div class="line-chart" id="homologatedTteAttritionReasonsChart"></div></article></section></main>
 <script>/* DASHBOARD_DATA_PLACEHOLDER */</script>
 <script>
 (async () => {
@@ -157,12 +182,21 @@
   const definitionById=new Map(filterDefinitions.map(definition=>[definition.id,definition]));
   // null equivale a todas las opciones; Set contiene las selecciones explícitas del usuario.
   const selectedByFilterId=new Map(filterDefinitions.map(definition=>[definition.id,definition.initial?new Set(definition.initial):null]));
+  // Cada catálogo se cachea por la combinación vigente de los demás filtros dimensionales.
+  const cachedOptionsByFilterId=new Map();
   const selectedFor=id=>selectedByFilterId.get(id);
   const matches=(row,definition,selection)=>selection===null||selection.has(String(row[definition.field]));
-  function optionsFor(definition, changedId) {
-    if(definition.options) return definition.options;
-    const values=[...new Set(data.cells.filter(row=>filterDefinitions.filter(candidate=>candidate.field&&candidate.id!==definition.id).every(candidate=>matches(row,candidate,selectedFor(candidate.id)))).map(row=>String(row[definition.field])))];
-    return values.sort((a,b)=>a.localeCompare(b)).map(value=>({value,label:definition.label(value)}));
+  function optionsFor(definition) {
+    const otherActiveFilters=filterDefinitions.filter(candidate=>candidate.field&&candidate.id!==definition.id&&selectedFor(candidate.id)!==null);
+    const dependencySignature=otherActiveFilters.map(candidate=>`${candidate.id}:${[...selectedFor(candidate.id)].sort().join("|")}`).join(";");
+    const cachedEntry=cachedOptionsByFilterId.get(definition.id);
+    if(cachedEntry?.signature===dependencySignature) return cachedEntry.options;
+    const compatibleRows=otherActiveFilters.length?data.cells.filter(row=>otherActiveFilters.every(candidate=>matches(row,candidate,selectedFor(candidate.id)))):data.cells;
+    const options=definition.options
+      ? definition.options.filter(option=>compatibleRows.some(row=>Number(row[option.value]||0)!==0))
+      : [...new Set(compatibleRows.map(row=>String(row[definition.field])))].sort((a,b)=>a.localeCompare(b,"es",{numeric:true})).map(value=>({value,label:definition.label(value)}));
+    cachedOptionsByFilterId.set(definition.id,{signature:dependencySignature,options});
+    return options;
   }
   const summaryFor=(selection,options)=>selection===null||selection.size===options.length?"Todos seleccionados":selection.size?`${selection.size} seleccionados`:"Ninguno seleccionado";
   function renderFilter(definition, changedId) {
@@ -174,9 +208,12 @@
     host.innerHTML=`<div class="filter-control"><span class="filter-title">${escapeHtml(definition.title)}</span><details><summary>${summaryFor(selection,options)}</summary><div class="filter-menu"><input class="filter-search" type="search" placeholder="Escriba el término de búsqueda" aria-label="Buscar ${escapeHtml(definition.title)}"><label class="filter-option filter-select-all"><input type="checkbox" data-select-all ${allSelected?"checked":""}>Todos</label><div>${options.map(option=>`<label class="filter-option" data-filter-option><input type="checkbox" value="${escapeHtml(option.value)}" ${(selection===null||selection.has(option.value))?"checked":""}>${escapeHtml(option.label)}</label>`).join("")}</div></div></details></div>`;
     const details=host.querySelector("details"), search=host.querySelector(".filter-search"), all=host.querySelector("[data-select-all]");
     search.addEventListener("input",()=>{const query=search.value.trim().toLocaleLowerCase();host.querySelectorAll("[data-filter-option]").forEach(option=>option.hidden=!option.textContent.toLocaleLowerCase().includes(query));});
-    details.addEventListener("change",event=>{const values=options.map(option=>option.value);if(event.target===all)selectedByFilterId.set(definition.id,all.checked?null:new Set());else{const next=selectedFor(definition.id)===null?new Set(values):new Set(selectedFor(definition.id));event.target.checked?next.add(event.target.value):next.delete(event.target.value);selectedByFilterId.set(definition.id,next.size===values.length?null:next);}refreshFilters(definition.id);renderDashboard();});
+    details.addEventListener("toggle",()=>{if(details.open&&host.dataset.filterSignature!==dependencySignatureFor(definition)){renderFilter(definition);host.querySelector("details").open=true;}});
+    host.dataset.filterSignature=dependencySignatureFor(definition);
+    details.addEventListener("change",event=>{const values=options.map(option=>option.value);if(event.target===all)selectedByFilterId.set(definition.id,all.checked?null:new Set());else{const next=selectedFor(definition.id)===null?new Set(values):new Set(selectedFor(definition.id));event.target.checked?next.add(event.target.value):next.delete(event.target.value);selectedByFilterId.set(definition.id,next.size===values.length?null:next);}document.querySelectorAll(".filter-control details[open]").forEach(control=>control.removeAttribute("open"));renderFilter(definition);renderDashboard();});
   }
-  function refreshFilters(changedId) { filterDefinitions.forEach(definition=>renderFilter(definition,changedId)); }
+  function dependencySignatureFor(definition) { return filterDefinitions.filter(candidate=>candidate.field&&candidate.id!==definition.id&&selectedFor(candidate.id)!==null).map(candidate=>`${candidate.id}:${[...selectedFor(candidate.id)].sort().join("|")}`).join(";"); }
+  function refreshFilters(changedId) { changedId ? renderFilter(definitionById.get(changedId)) : filterDefinitions.forEach(definition=>renderFilter(definition)); }
   function metricSelection(id) { const definition=definitionById.get(id), selected=selectedFor(id); return new Set(selected===null?definition.options.map(option=>option.value):selected); }
   function initialiseFilters() {
     element("dashboardTitle").textContent=data.title;element("dashboardSubtitle").textContent=data.subtitle;refreshFilters();
@@ -185,7 +222,8 @@
   }
   function selectedCells() {
     const selectedAttritionTypes=metricSelection("attritionType"), selectedAbsenceTypes=metricSelection("absenceType");
-    return data.cells.filter(cell=>filterDefinitions.filter(definition=>definition.field).every(definition=>matches(cell,definition,selectedFor(definition.id)))).map(cell=>({...cell,
+    const activeDimensionFilters=filterDefinitions.filter(definition=>definition.field&&selectedFor(definition.id)!==null);
+    return data.cells.filter(cell=>activeDimensionFilters.every(definition=>matches(cell,definition,selectedFor(definition.id)))).map(cell=>({...cell,
       resignations:selectedAttritionTypes.has("resignations")?cell.resignations:0,abandonments:selectedAttritionTypes.has("abandonments")?cell.abandonments:0,dismissals:selectedAttritionTypes.has("dismissals")?cell.dismissals:0,not_counted_attrition:selectedAttritionTypes.has("not_counted_attrition")?cell.not_counted_attrition:0,
       manageable_absenteeism:selectedAbsenceTypes.has("manageable_absenteeism")?cell.manageable_absenteeism:0,non_manageable_absenteeism:selectedAbsenceTypes.has("non_manageable_absenteeism")?cell.non_manageable_absenteeism:0,other_absenteeism:selectedAbsenceTypes.has("other_absenteeism")?cell.other_absenteeism:0
     }));
@@ -221,37 +259,197 @@
     const maxRate=Math.max(...rows.map(row=>(Number.isFinite(row.cdbr)?row.cdbr:0)+(Number.isFinite(row.nonCdbr)?row.nonCdbr:0)),.01), series=[{key:"cdbr",color:"#bf1d22",labelColor:"#ffffff"},{key:"nonCdbr",color:"#398e43",labelColor:"#ffffff"}];
     container.innerHTML=rows.map(row=>{const total=series.reduce((sum,item)=>sum+(Number.isFinite(row[item.key])?row[item.key]:0),0), stackHeight=Math.max(total/maxRate*90,.5), bars=series.map(item=>{const value=Number.isFinite(row[item.key])?row[item.key]:0, height=total ? value/total*100 : 0; return `<div class="bar" style="height:${height}%;background:${item.color}">${value?`<span class="bar-component-label" style="color:${item.labelColor}">${percentage(value)}</span>`:""}</div>`;}).join(""); return `<div class="bar-group"><div class="stack-wrapper" style="height:${stackHeight}%"><div class="stack">${bars}</div></div><span class="bar-label">${monthNames[row.month-1]}</span></div>`;}).join("");
   }
-  function renderReasonLines(containerId, family) {
+  function renderReasonLines(containerId, family, selectedMetricCells) {
     const container=element(containerId), attritionMap={Renuncia:"resignations","Abandono de empleo":"abandonments",Despido:"dismissals","No cuenta":"not_counted_attrition"}, attritionSelected=metricSelection("attritionType"), absenceSelected=metricSelection("absenceType");
-    const reasons=(data.reasonCells||[]).filter(row=>row.family===family&&filterDefinitions.filter(definition=>definition.field).every(definition=>matches(row,definition,selectedFor(definition.id)))&&(family==="absence"||attritionSelected.has(attritionMap[row.attritionType])));
-    const values=row=>family==="absence"?["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"].reduce((sum,name)=>sum+(absenceSelected.has(name)?Number(row[name]||0):0),0):Number(row.value||0),denominators=monthlyAggregates(selectedCells()),availableMonths=denominators.map(row=>row.month),denominatorName=family==="absence"?"scheduled_workforce":"headcount",totals=Object.fromEntries(denominators.map(row=>[row.month,row[denominatorName]||0]));
+    const activeDimensionFilters=filterDefinitions.filter(definition=>definition.field&&selectedFor(definition.id)!==null);
+    const reasons=(data.reasonCells||[]).filter(row=>row.family===family&&activeDimensionFilters.every(definition=>matches(row,definition,selectedFor(definition.id)))&&(family==="absence"||attritionSelected.has(attritionMap[row.attritionType])));
+    const values=row=>family==="absence"?["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"].reduce((sum,name)=>sum+(absenceSelected.has(name)?Number(row[name]||0):0),0):Number(row.value||0),denominators=monthlyAggregates(selectedMetricCells),availableMonths=denominators.map(row=>row.month),denominatorName=family==="absence"?"scheduled_workforce":"headcount",totals=Object.fromEntries(denominators.map(row=>[row.month,row[denominatorName]||0]));
     const byReason={};reasons.forEach(row=>{const key=family==="attrition"?row.attritionType:row.reason;(byReason[key]??={})[row.month]=(byReason[key][row.month]||0)+values(row);});const series=Object.entries(byReason).map(([name,months])=>({name,points:availableMonths.map(month=>({month,value:(months[month]||0)/(totals[month]||1)}))})).sort((a,b)=>b.points.reduce((sum,point)=>sum+point.value,0)-a.points.reduce((sum,point)=>sum+point.value,0)).slice(0,4);
     if(!series.length){container.innerHTML='<div class="empty">No hay motivos para los filtros seleccionados.</div>';return;}const width=600,height=270,left=42,right=8,top=28,bottom=30,max=Math.max(...series.flatMap(seriesItem=>seriesItem.points.map(point=>point.value)),.01)*1.15,x=month=>left+availableMonths.indexOf(month)*(width-left-right)/Math.max(availableMonths.length-1,1),y=value=>height-bottom-value/max*(height-top-bottom),colors=family==="attrition"?{"Despido":"#b2b900","Renuncia":"#123b66","Abandono de empleo":"#f59e0b","No cuenta":"#6d7886"}:{"AUSENCIA INJUSTIFICADA":"#b2b900","ENFERMEDAD":"#123b66","ART/ ACCIDENTES DE TRABAJO":"#f59e0b","VACACIONES":"#6d7886"};
     const grid=[.25,.5,.75,1].map(step=>`<text x="${left-5}" y="${y(max*step)+4}" text-anchor="end" class="line-label">${percentage(max*step)}</text>`).join(""),lines=series.map(seriesItem=>`<path d="M${seriesItem.points.map(point=>`${x(point.month)},${y(point.value)}`).join(" L")}" fill="none" stroke="${colors[seriesItem.name]||"#6d7886"}" stroke-width="2"/>${seriesItem.points.map(point=>`<circle cx="${x(point.month)}" cy="${y(point.value)}" r="2.5" fill="${colors[seriesItem.name]||"#6d7886"}"><title>${escapeHtml(seriesItem.name)} · ${monthNames[point.month-1]}: ${percentage(point.value)}</title></circle>${point.value?`<text x="${x(point.month)}" y="${y(point.value)-7}" text-anchor="middle" class="line-value" fill="${colors[seriesItem.name]||"#6d7886"}">${percentage(point.value)}</text>`:""}`).join("")}`).join(""),legend=series.map(seriesItem=>`<span><i style="background:${colors[seriesItem.name]||"#6d7886"}"></i>${escapeHtml(seriesItem.name)}</span>`).join("");
     element(containerId==="absenceReasonsChart"?"absenceReasonsLegend":"attritionReasonsLegend").innerHTML=legend;container.innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Detalle mensual"><title>Detalle mensual</title>${grid}${lines}${availableMonths.map(month=>`<text x="${x(month)}" y="${height-6}" text-anchor="middle" class="line-label">${monthNames[month-1]}</text>`).join("")}</svg>`;
   }
-  function renderDashboard() { const cells=selectedCells(), rows=monthlyAggregates(cells), absenteeismComparisonRows=monthlyComparisonRates(cells,["manageable_absenteeism"],"scheduled_workforce"), turnoverComparisonRows=monthlyComparisonRates(cells,["resignations","abandonments","dismissals"],"headcount"); updateKpis(cells); renderStackedBars("absenteeismChart",rows,["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"],"scheduled_workforce",["#123b66","#b2b900","#151515"],month=>monthNames[month-1]); renderStackedBars("turnoverChart",rows,["resignations","abandonments","dismissals","not_counted_attrition"],"headcount",["#d5d9df","#aeb7c2","#6d7886","#1d1d1d"],month=>monthNames[month-1]); renderComparisonBars("absenteeismComparisonChart",absenteeismComparisonRows); renderComparisonBars("turnoverComparisonChart",turnoverComparisonRows); renderReasonLines("absenceReasonsChart","absence"); renderReasonLines("attritionReasonsChart","attrition"); element("scopeDescription").textContent=`Brasil · ${cells.length} celdas agregadas · Segmento: ${summaryFor(selectedFor("segmentFilter"), optionsFor(definitionById.get("segmentFilter")))} · Mes: ${summaryFor(selectedFor("monthFilter"), optionsFor(definitionById.get("monthFilter")))}`; }
+  function renderDashboard() { const cells=selectedCells(), rows=monthlyAggregates(cells), absenteeismComparisonRows=monthlyComparisonRates(cells,["manageable_absenteeism"],"scheduled_workforce"), turnoverComparisonRows=monthlyComparisonRates(cells,["resignations","abandonments","dismissals"],"headcount"); updateKpis(cells); renderStackedBars("absenteeismChart",rows,["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"],"scheduled_workforce",["#123b66","#b2b900","#151515"],month=>monthNames[month-1]); renderStackedBars("turnoverChart",rows,["resignations","abandonments","dismissals","not_counted_attrition"],"headcount",["#d5d9df","#aeb7c2","#6d7886","#1d1d1d"],month=>monthNames[month-1]); renderComparisonBars("absenteeismComparisonChart",absenteeismComparisonRows); renderComparisonBars("turnoverComparisonChart",turnoverComparisonRows); renderReasonLines("absenceReasonsChart","absence",cells); renderReasonLines("attritionReasonsChart","attrition",cells); element("scopeDescription").textContent=`Brasil · ${cells.length} celdas agregadas · Segmento: ${summaryFor(selectedFor("segmentFilter"), optionsFor(definitionById.get("segmentFilter")))} · Mes: ${summaryFor(selectedFor("monthFilter"), optionsFor(definitionById.get("monthFilter")))}`; }
   initialiseFilters(); renderDashboard();
 })().catch(error => {
   console.error("No fue posible cargar los datos embebidos del dashboard.", error);
   document.getElementById("scopeDescription").textContent = "No fue posible cargar los datos del dashboard.";
 });
+</script><script>
+window.initializeHomologatedTteDashboard = (() => {
+  let initializationPromise;
+  return () => {
+    if (!initializationPromise) initializationPromise = (async () => {
+  // Los datos permanecen dentro del HTML, comprimidos para que miles de supervisores no multipliquen el peso publicado.
+  const compressedPayloadBytes = Uint8Array.from(atob(window.HOMOLOGATED_TTE_DASHBOARD_DATA_GZIP_BASE64), character => character.charCodeAt(0));
+  const decompressedPayloadStream = new Blob([compressedPayloadBytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+  const data = JSON.parse(await new Response(decompressedPayloadStream).text());
+  const monthNames = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
+  const metricNames = ["headcount","hirings","resignations","dismissals","abandonments","not_counted_attrition","scheduled_workforce","manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"];
+  const element = id => document.getElementById(id);
+  const asNumber = number => new Intl.NumberFormat("es-BR", {maximumFractionDigits:0}).format(number || 0);
+  const percentage = ratio => Number.isFinite(ratio) ? `${(ratio * 100).toLocaleString("es-BR", {minimumFractionDigits:1, maximumFractionDigits:1})}%` : "—";
+  const escapeHtml = text => String(text).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));
+  const filterDefinitions = [
+    {id:"homologatedTteYearFilter",title:"Año",field:"year",initial:[String(data.reportingYear)],label:String},
+    {id:"homologatedTteMonthFilter",title:"Mes",field:"month",label:value=>`${monthNames[Number(value)-1]} ${data.reportingYear}`},
+    {id:"homologatedTteRegionFilter",title:"Región homologada",field:"region",label:String}, {id:"homologatedTteAreaFilter",title:"Área",field:"area",label:String},
+    {id:"homologatedTteSubareaFilter",title:"Subárea",field:"subarea",label:String}, {id:"homologatedTteOperationFilter",title:"Tipo de operación",field:"operationType",label:String},
+    {id:"homologatedTteAttritionType",title:"Tipo de baja",options:[{value:"resignations",label:"Renuncia"},{value:"abandonments",label:"Abandono"},{value:"dismissals",label:"Despido"},{value:"not_counted_attrition",label:"No cuenta"}]},
+    {id:"homologatedTteSiteFilter",title:"Site",field:"siteOperativo",label:String}, {id:"homologatedTtePbpFilter",title:"PBP",field:"pbp",label:String},
+    {id:"homologatedTtePcdFilter",title:"PCD",field:"pcd",label:String}, {id:"homologatedTteSupervisorFilter",title:"Supervisor",field:"supervisor",label:String},
+    {id:"homologatedTteSegmentFilter",title:"Segmento",field:"segment",label:String},
+    {id:"homologatedTteAbsenceType",title:"Tipo de ausentismo",options:[{value:"manageable_absenteeism",label:"Gestionable"},{value:"non_manageable_absenteeism",label:"No gestionable"},{value:"other_absenteeism",label:"Otros"}]},
+    {id:"homologatedTteCoverageFilter",title:"Cobertura TTE",field:"tteCoverageStatus",label:String,provenance:"regional"},
+    {id:"homologatedTteCampaignFilter",title:"Campaña",field:"tteCampaign",label:String,provenance:"regional"},
+    {id:"homologatedTteDirectorFilter",title:"Director",field:"tteDirector",label:String,provenance:"regional"},
+    {id:"homologatedTteManagerFilter",title:"Gerente",field:"tteManager",label:String,provenance:"regional"},
+    {id:"homologatedTteN3Filter",title:"N3",field:"tteN3",label:String,provenance:"regional"},
+    {id:"homologatedTteRegionalRegionFilter",title:"Región TTE",field:"tteRegion",label:String,provenance:"regional"},
+    {id:"homologatedTteTier4Filter",title:"Tier 4",field:"tteTier4",label:String,provenance:"regional"},
+    {id:"homologatedTteTier5Filter",title:"Tier 5",field:"tteTier5",label:String,provenance:"regional"},
+    {id:"homologatedTteTier6Filter",title:"Tier 6",field:"tteTier6",label:String,provenance:"regional"},
+    {id:"homologatedTteLocationFilter",title:"Localidade",field:"tteLocation",label:String,provenance:"regional"},
+    {id:"homologatedTteRoleFilter",title:"Cargo",field:"tteRole",label:String,provenance:"regional"},
+    {id:"homologatedTteSeniorityFilter",title:"Seniority",field:"tteSeniority",label:String,provenance:"regional",initial:["Non CDBR","Representantes - CDBR","Sin cobertura TTE","Sin Seniority informado"]},
+    {id:"homologatedTteStatusFilter",title:"Status",field:"tteHistoricalStatus",label:String,provenance:"regional"},
+    {id:"homologatedTteInssFilter",title:"INSS",field:"tteInss",label:String,provenance:"regional"}
+  ];
+  const definitionById=new Map(filterDefinitions.map(definition=>[definition.id,definition]));
+  // null equivale a todas las opciones; Set contiene las selecciones explícitas del usuario.
+  const selectedByFilterId=new Map(filterDefinitions.map(definition=>[definition.id,definition.initial?new Set(definition.initial):null]));
+  // Cada catálogo se cachea por la combinación vigente de los demás filtros dimensionales.
+  const cachedOptionsByFilterId=new Map();
+  const selectedFor=id=>selectedByFilterId.get(id);
+  const matches=(row,definition,selection)=>selection===null||selection.has(String(row[definition.field]));
+  function optionsFor(definition) {
+    const otherActiveFilters=filterDefinitions.filter(candidate=>candidate.field&&candidate.id!==definition.id&&selectedFor(candidate.id)!==null);
+    const dependencySignature=otherActiveFilters.map(candidate=>`${candidate.id}:${[...selectedFor(candidate.id)].sort().join("|")}`).join(";");
+    const cachedEntry=cachedOptionsByFilterId.get(definition.id);
+    if(cachedEntry?.signature===dependencySignature) return cachedEntry.options;
+    const compatibleRows=otherActiveFilters.length?data.cells.filter(row=>otherActiveFilters.every(candidate=>matches(row,candidate,selectedFor(candidate.id)))):data.cells;
+    const options=definition.options
+      ? definition.options.filter(option=>compatibleRows.some(row=>Number(row[option.value]||0)!==0))
+      : [...new Set(compatibleRows.map(row=>String(row[definition.field])))].sort((a,b)=>a.localeCompare(b,"es",{numeric:true})).map(value=>({value,label:definition.label(value)}));
+    cachedOptionsByFilterId.set(definition.id,{signature:dependencySignature,options});
+    return options;
+  }
+  const summaryFor=(selection,options)=>selection===null||selection.size===options.length?"Todos seleccionados":selection.size?`${selection.size} seleccionados`:"Ninguno seleccionado";
+  function renderFilter(definition, changedId) {
+    const host=document.querySelector(`[data-enriched-filter-id="${definition.id}"]`), options=optionsFor(definition,changedId), existing=selectedFor(definition.id);
+    // Todo filtro actual usa una fuente centralizada homologada. Los futuros filtros regionales declararán provenance:"regional".
+    host.dataset.filterProvenance=definition.provenance||"centralized";
+    const compatible=existing===null?null:new Set([...existing].filter(value=>options.some(option=>option.value===value))); selectedByFilterId.set(definition.id,compatible);
+    const selection=selectedFor(definition.id), allSelected=selection===null||selection.size===options.length;
+    host.innerHTML=`<div class="filter-control"><span class="filter-title">${escapeHtml(definition.title)}</span><details><summary>${summaryFor(selection,options)}</summary><div class="filter-menu"><input class="filter-search" type="search" placeholder="Escriba el término de búsqueda" aria-label="Buscar ${escapeHtml(definition.title)}"><label class="filter-option filter-select-all"><input type="checkbox" data-select-all ${allSelected?"checked":""}>Todos</label><div>${options.map(option=>`<label class="filter-option" data-filter-option><input type="checkbox" value="${escapeHtml(option.value)}" ${(selection===null||selection.has(option.value))?"checked":""}>${escapeHtml(option.label)}</label>`).join("")}</div></div></details></div>`;
+    const details=host.querySelector("details"), search=host.querySelector(".filter-search"), all=host.querySelector("[data-select-all]");
+    search.addEventListener("input",()=>{const query=search.value.trim().toLocaleLowerCase();host.querySelectorAll("[data-filter-option]").forEach(option=>option.hidden=!option.textContent.toLocaleLowerCase().includes(query));});
+    details.addEventListener("toggle",()=>{if(details.open&&host.dataset.filterSignature!==dependencySignatureFor(definition)){renderFilter(definition);host.querySelector("details").open=true;}});
+    host.dataset.filterSignature=dependencySignatureFor(definition);
+    details.addEventListener("change",event=>{const values=options.map(option=>option.value);if(event.target===all)selectedByFilterId.set(definition.id,all.checked?null:new Set());else{const next=selectedFor(definition.id)===null?new Set(values):new Set(selectedFor(definition.id));event.target.checked?next.add(event.target.value):next.delete(event.target.value);selectedByFilterId.set(definition.id,next.size===values.length?null:next);}document.querySelectorAll(".filter-control details[open]").forEach(control=>control.removeAttribute("open"));renderFilter(definition);renderDashboard();});
+  }
+  function dependencySignatureFor(definition) { return filterDefinitions.filter(candidate=>candidate.field&&candidate.id!==definition.id&&selectedFor(candidate.id)!==null).map(candidate=>`${candidate.id}:${[...selectedFor(candidate.id)].sort().join("|")}`).join(";"); }
+  function refreshFilters(changedId) { changedId ? renderFilter(definitionById.get(changedId)) : filterDefinitions.forEach(definition=>renderFilter(definition)); }
+  function metricSelection(id) { const definition=definitionById.get(id), selected=selectedFor(id); return new Set(selected===null?definition.options.map(option=>option.value):selected); }
+  function initialiseFilters() {
+    element("dashboardTitle").textContent=data.title;element("dashboardSubtitle").textContent=data.subtitle;refreshFilters();
+    document.addEventListener("click",event=>{if(!event.target.closest(".filter-control"))document.querySelectorAll(".filter-control details[open]").forEach(control=>control.removeAttribute("open"));});
+    element("homologatedTteResetFiltersButton").addEventListener("click",()=>{filterDefinitions.forEach(definition=>selectedByFilterId.set(definition.id,definition.initial?new Set(definition.initial):null));refreshFilters();renderDashboard();});
+  }
+  function selectedCells() {
+    const selectedAttritionTypes=metricSelection("homologatedTteAttritionType"), selectedAbsenceTypes=metricSelection("homologatedTteAbsenceType");
+    const activeDimensionFilters=filterDefinitions.filter(definition=>definition.field&&selectedFor(definition.id)!==null);
+    return data.cells.filter(cell=>activeDimensionFilters.every(definition=>matches(cell,definition,selectedFor(definition.id)))).map(cell=>({...cell,
+      resignations:selectedAttritionTypes.has("resignations")?cell.resignations:0,abandonments:selectedAttritionTypes.has("abandonments")?cell.abandonments:0,dismissals:selectedAttritionTypes.has("dismissals")?cell.dismissals:0,not_counted_attrition:selectedAttritionTypes.has("not_counted_attrition")?cell.not_counted_attrition:0,
+      manageable_absenteeism:selectedAbsenceTypes.has("manageable_absenteeism")?cell.manageable_absenteeism:0,non_manageable_absenteeism:selectedAbsenceTypes.has("non_manageable_absenteeism")?cell.non_manageable_absenteeism:0,other_absenteeism:selectedAbsenceTypes.has("other_absenteeism")?cell.other_absenteeism:0
+    }));
+  }
+  function aggregate(cells) { const totals = Object.fromEntries(metricNames.map(name => [name, 0])); cells.forEach(cell => metricNames.forEach(name => totals[name] += Number(cell[name] || 0))); return totals; }
+  function monthlyAggregates(cells) { return Array.from({length:12}, (_, index) => { const monthCells=cells.filter(cell=>cell.month===index+1); return {month:index+1, ...aggregate(monthCells)}; }).filter(row => row.headcount || row.scheduled_workforce || row.resignations || row.dismissals || row.abandonments); }
+  function rate(numerator, denominator) { return denominator ? numerator / denominator : NaN; }
+  function updateKpis(cells) {
+    const totals=aggregate(cells), months=[...new Set(cells.map(cell=>cell.month))], monthlyHeadcounts=months.map(month=>aggregate(cells.filter(cell=>cell.month===month)).headcount), homologatedTteAverageHeadcount=monthlyHeadcounts.length ? monthlyHeadcounts.reduce((sum,value)=>sum+value,0)/monthlyHeadcounts.length : NaN;
+    const totalAbsence=totals.manageable_absenteeism+totals.non_manageable_absenteeism+totals.other_absenteeism, homologatedTteTotalAttrition=totals.resignations+totals.dismissals+totals.abandonments+totals.not_counted_attrition;
+    element("homologatedTteAverageHeadcount").textContent=Number.isFinite(homologatedTteAverageHeadcount)?asNumber(homologatedTteAverageHeadcount):"—";
+    element("homologatedTteManageableAbsenteeismRate").textContent=percentage(rate(totals.manageable_absenteeism,totals.scheduled_workforce)); element("homologatedTteManageableAbsenteeismVolume").textContent=asNumber(totals.manageable_absenteeism);
+    element("homologatedTteNonManageableAbsenteeismRate").textContent=percentage(rate(totals.non_manageable_absenteeism,totals.scheduled_workforce)); element("homologatedTteNonManageableAbsenteeismVolume").textContent=asNumber(totals.non_manageable_absenteeism);
+    element("homologatedTteTotalAbsenteeismRate").textContent=percentage(rate(totalAbsence,totals.scheduled_workforce)); element("homologatedTteScheduledWorkforce").textContent=`Dotación: ${asNumber(totals.scheduled_workforce)}`;
+    element("homologatedTteTurnoverRate").textContent=percentage(rate(homologatedTteTotalAttrition,homologatedTteAverageHeadcount)); element("homologatedTteTotalAttrition").textContent=`Bajas: ${asNumber(homologatedTteTotalAttrition)}`;
+    element("homologatedTteResignationRate").textContent=percentage(rate(totals.resignations,homologatedTteAverageHeadcount)); element("homologatedTteResignations").textContent=asNumber(totals.resignations);
+    const directHeadcount=cells.filter(cell=>cell.segment!=="Externos").reduce((sum,cell)=>sum+cell.headcount,0), cdbrHeadcount=cells.filter(cell=>cell.segment==="Determinado (CDBR)").reduce((sum,cell)=>sum+cell.headcount,0); element("homologatedTteCdbrShare").textContent=percentage(rate(cdbrHeadcount,directHeadcount));
+  }
+  function renderStackedBars(containerId, rows, components, denominator, colors, labelFormatter) {
+    const container=element(containerId); if(!rows.length){container.innerHTML='<div class="empty">No hay datos para los filtros seleccionados.</div>';return;} const maxRate=Math.max(...rows.map(row=>components.reduce((sum,name)=>sum+row[name],0)/(row[denominator]||1)),.01);
+    const labelColors=colors.map(color=>["#d5d9df","#aeb7c2"].includes(color)?"#202124":"#ffffff");
+    container.innerHTML=rows.map(row=>{const total=components.reduce((sum,name)=>sum+row[name],0), totalRate=total/(row[denominator]||1), stackHeight=Math.max((totalRate/maxRate)*90,.5); const bars=components.map((name,index)=>{const componentRate=row[name]/(row[denominator]||1), componentHeight=totalRate ? componentRate/totalRate*100 : 0, componentLabel=componentRate>0?`<span class="bar-component-label" style="color:${labelColors[index]}">${percentage(componentRate)}</span>`:""; return `<div class="bar" style="height:${componentHeight}%;background:${colors[index]}">${componentLabel}</div>`;}).join(""); return `<div class="bar-group"><div class="stack-wrapper" style="height:${stackHeight}%"><span class="rate">${percentage(totalRate)}</span><div class="stack">${bars}</div></div><span class="bar-label">${labelFormatter(row.month)}</span></div>`;}).join("");
+  }
+  function monthlyComparisonRates(cells, numeratorNames, denominator) {
+    const populationRate = population => rate(population.reduce((sum,cell)=>sum+numeratorNames.reduce((subtotal,name)=>subtotal+Number(cell[name]||0),0),0), population.reduce((sum,cell)=>sum+Number(cell[denominator]||0),0));
+    return Array.from({length:12}, (_,index) => {
+      const monthCells=cells.filter(cell=>cell.month===index+1);
+      return {month:index+1, cdbr:populationRate(monthCells.filter(cell=>cell.segment==="Determinado (CDBR)")), nonCdbr:populationRate(monthCells.filter(cell=>cell.segment!=="Determinado (CDBR)"))};
+    }).filter(row=>Number.isFinite(row.cdbr)||Number.isFinite(row.nonCdbr));
+  }
+  function renderComparisonBars(containerId, rows) {
+    const container=element(containerId); if(!rows.length){container.innerHTML='<div class="empty">No hay datos para los filtros seleccionados.</div>';return;}
+    const maxRate=Math.max(...rows.map(row=>(Number.isFinite(row.cdbr)?row.cdbr:0)+(Number.isFinite(row.nonCdbr)?row.nonCdbr:0)),.01), series=[{key:"cdbr",color:"#bf1d22",labelColor:"#ffffff"},{key:"nonCdbr",color:"#398e43",labelColor:"#ffffff"}];
+    container.innerHTML=rows.map(row=>{const total=series.reduce((sum,item)=>sum+(Number.isFinite(row[item.key])?row[item.key]:0),0), stackHeight=Math.max(total/maxRate*90,.5), bars=series.map(item=>{const value=Number.isFinite(row[item.key])?row[item.key]:0, height=total ? value/total*100 : 0; return `<div class="bar" style="height:${height}%;background:${item.color}">${value?`<span class="bar-component-label" style="color:${item.labelColor}">${percentage(value)}</span>`:""}</div>`;}).join(""); return `<div class="bar-group"><div class="stack-wrapper" style="height:${stackHeight}%"><div class="stack">${bars}</div></div><span class="bar-label">${monthNames[row.month-1]}</span></div>`;}).join("");
+  }
+  function renderReasonLines(containerId, family, selectedMetricCells) {
+    const container=element(containerId), attritionMap={Renuncia:"resignations","Abandono de empleo":"abandonments",Despido:"dismissals","No cuenta":"not_counted_attrition"}, attritionSelected=metricSelection("homologatedTteAttritionType"), absenceSelected=metricSelection("homologatedTteAbsenceType");
+    const activeDimensionFilters=filterDefinitions.filter(definition=>definition.field&&selectedFor(definition.id)!==null);
+    const reasons=(data.reasonCells||[]).filter(row=>row.family===family&&activeDimensionFilters.every(definition=>matches(row,definition,selectedFor(definition.id)))&&(family==="absence"||attritionSelected.has(attritionMap[row.attritionType])));
+    const values=row=>family==="absence"?["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"].reduce((sum,name)=>sum+(absenceSelected.has(name)?Number(row[name]||0):0),0):Number(row.value||0),denominators=monthlyAggregates(selectedMetricCells),availableMonths=denominators.map(row=>row.month),denominatorName=family==="absence"?"scheduled_workforce":"headcount",totals=Object.fromEntries(denominators.map(row=>[row.month,row[denominatorName]||0]));
+    const byReason={};reasons.forEach(row=>{const key=family==="attrition"?row.attritionType:row.reason;(byReason[key]??={})[row.month]=(byReason[key][row.month]||0)+values(row);});const series=Object.entries(byReason).map(([name,months])=>({name,points:availableMonths.map(month=>({month,value:(months[month]||0)/(totals[month]||1)}))})).sort((a,b)=>b.points.reduce((sum,point)=>sum+point.value,0)-a.points.reduce((sum,point)=>sum+point.value,0)).slice(0,4);
+    if(!series.length){container.innerHTML='<div class="empty">No hay motivos para los filtros seleccionados.</div>';return;}const width=600,height=270,left=42,right=8,top=28,bottom=30,max=Math.max(...series.flatMap(seriesItem=>seriesItem.points.map(point=>point.value)),.01)*1.15,x=month=>left+availableMonths.indexOf(month)*(width-left-right)/Math.max(availableMonths.length-1,1),y=value=>height-bottom-value/max*(height-top-bottom),colors=family==="attrition"?{"Despido":"#b2b900","Renuncia":"#123b66","Abandono de empleo":"#f59e0b","No cuenta":"#6d7886"}:{"AUSENCIA INJUSTIFICADA":"#b2b900","ENFERMEDAD":"#123b66","ART/ ACCIDENTES DE TRABAJO":"#f59e0b","VACACIONES":"#6d7886"};
+    const grid=[.25,.5,.75,1].map(step=>`<text x="${left-5}" y="${y(max*step)+4}" text-anchor="end" class="line-label">${percentage(max*step)}</text>`).join(""),lines=series.map(seriesItem=>`<path d="M${seriesItem.points.map(point=>`${x(point.month)},${y(point.value)}`).join(" L")}" fill="none" stroke="${colors[seriesItem.name]||"#6d7886"}" stroke-width="2"/>${seriesItem.points.map(point=>`<circle cx="${x(point.month)}" cy="${y(point.value)}" r="2.5" fill="${colors[seriesItem.name]||"#6d7886"}"><title>${escapeHtml(seriesItem.name)} · ${monthNames[point.month-1]}: ${percentage(point.value)}</title></circle>${point.value?`<text x="${x(point.month)}" y="${y(point.value)-7}" text-anchor="middle" class="line-value" fill="${colors[seriesItem.name]||"#6d7886"}">${percentage(point.value)}</text>`:""}`).join("")}`).join(""),legend=series.map(seriesItem=>`<span><i style="background:${colors[seriesItem.name]||"#6d7886"}"></i>${escapeHtml(seriesItem.name)}</span>`).join("");
+    element(containerId==="homologatedTteAbsenceReasonsChart"?"homologatedTteAbsenceReasonsLegend":"homologatedTteAttritionReasonsLegend").innerHTML=legend;container.innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Detalle mensual"><title>Detalle mensual</title>${grid}${lines}${availableMonths.map(month=>`<text x="${x(month)}" y="${height-6}" text-anchor="middle" class="line-label">${monthNames[month-1]}</text>`).join("")}</svg>`;
+  }
+  function renderDashboard() { const cells=selectedCells(), rows=monthlyAggregates(cells), absenteeismComparisonRows=monthlyComparisonRates(cells,["manageable_absenteeism"],"scheduled_workforce"), turnoverComparisonRows=monthlyComparisonRates(cells,["resignations","abandonments","dismissals"],"headcount"); updateKpis(cells); renderStackedBars("homologatedTteAbsenteeismChart",rows,["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"],"scheduled_workforce",["#123b66","#b2b900","#151515"],month=>monthNames[month-1]); renderStackedBars("homologatedTteTurnoverChart",rows,["resignations","abandonments","dismissals","not_counted_attrition"],"headcount",["#d5d9df","#aeb7c2","#6d7886","#1d1d1d"],month=>monthNames[month-1]); renderComparisonBars("homologatedTteAbsenteeismComparisonChart",absenteeismComparisonRows); renderComparisonBars("homologatedTteTurnoverComparisonChart",turnoverComparisonRows); renderReasonLines("homologatedTteAbsenceReasonsChart","absence",cells); renderReasonLines("homologatedTteAttritionReasonsChart","attrition",cells); element("homologatedTteScopeDescription").textContent=`Brasil · ${cells.length} celdas agregadas · Segmento: ${summaryFor(selectedFor("homologatedTteSegmentFilter"), optionsFor(definitionById.get("homologatedTteSegmentFilter")))} · Mes: ${summaryFor(selectedFor("homologatedTteMonthFilter"), optionsFor(definitionById.get("homologatedTteMonthFilter")))}`; }
+  initialiseFilters(); renderDashboard();
+})().catch(error => {
+  console.error("No fue posible cargar los datos embebidos del dashboard.", error);
+  document.getElementById("homologatedTteScopeDescription").textContent = "No fue posible cargar los datos del dashboard.";
+});
+    return initializationPromise;
+  };
+})();
 </script>
 <script>
-(async () => {
+(() => {
   const viewButtons = [...document.querySelectorAll("[data-dashboard-view]")];
-  viewButtons.forEach(button => button.addEventListener("click", () => {
+  const lazyInitializerByViewIdentifier = {
+    teamTteDashboardView: () => window.initializeTeamTteDashboard?.(),
+    homologatedTteDashboardView: () => window.initializeHomologatedTteDashboard?.(),
+  };
+  function activateDashboardView(selectedButton) {
     viewButtons.forEach(candidate => {
-      const isSelected = candidate === button;
+      const isSelected = candidate === selectedButton;
       candidate.setAttribute("aria-selected", String(isSelected));
       document.getElementById(candidate.dataset.dashboardView).hidden = !isSelected;
     });
-    history.replaceState(null, "", `#${button.dataset.dashboardView}`);
-  }));
+    history.replaceState(null, "", `#${selectedButton.dataset.dashboardView}`);
+    const statusElementIdentifier = selectedButton.dataset.dashboardView === "teamTteDashboardView"
+      ? "teamTteScopeDescription"
+      : selectedButton.dataset.dashboardView === "homologatedTteDashboardView"
+        ? "homologatedTteScopeDescription"
+        : null;
+    if (statusElementIdentifier && !document.getElementById(statusElementIdentifier).textContent) {
+      document.getElementById(statusElementIdentifier).textContent = "Cargando datos de la vista…";
+    }
+    // El temporizador permite pintar la pestaña antes de descomprimir su payload.
+    setTimeout(() => lazyInitializerByViewIdentifier[selectedButton.dataset.dashboardView]?.(), 0);
+  }
+  viewButtons.forEach(button => button.addEventListener("click", () => activateDashboardView(button)));
   const requestedViewButton = viewButtons.find(button => `#${button.dataset.dashboardView}` === window.location.hash);
-  if (requestedViewButton) requestedViewButton.click();
-
-  const compressedRegionalPayloadBytes = Uint8Array.from(
+  if (requestedViewButton) setTimeout(() => requestedViewButton.click(), 0);
+})();
+</script>
+<script>
+window.initializeTeamTteDashboard = (() => {
+  let initializationPromise;
+  return () => {
+    if (!initializationPromise) initializationPromise = (async () => {const compressedRegionalPayloadBytes = Uint8Array.from(
     atob(window.TEAM_TTE_DASHBOARD_DATA_GZIP_BASE64),
     character => character.charCodeAt(0),
   );
@@ -296,20 +494,35 @@
       definition.initial ? new Set(definition.initial.map(String)) : null,
     ]),
   );
+  // Cada catálogo regional se cachea por la combinación vigente de los demás filtros.
+  const cachedRegionalOptionsByFilterId = new Map();
   const selectionFor = filterIdentifier => selectedValuesByFilterId.get(filterIdentifier);
   const rowMatchesDefinition = (row, definition, selection) => selection === null || selection.has(String(row[definition.field]));
 
-  function filteredCellsIgnoringOneDefinition(ignoredFilterIdentifier) {
-    return teamTteCells.filter(row => regionalFilterDefinitions.every(definition =>
-      definition.id === ignoredFilterIdentifier || rowMatchesDefinition(row, definition, selectionFor(definition.id)),
-    ));
+  function regionalDependencySignatureFor(definition) {
+    return regionalFilterDefinitions
+      .filter(candidate => candidate.id !== definition.id && selectionFor(candidate.id) !== null)
+      .map(candidate => `${candidate.id}:${[...selectionFor(candidate.id)].sort().join("|")}`)
+      .join(";");
   }
 
   function availableOptionsFor(definition) {
-    const values = [...new Set(
-      filteredCellsIgnoringOneDefinition(definition.id).map(row => String(row[definition.field])),
-    )].sort((firstValue, secondValue) => firstValue.localeCompare(secondValue, "es", {numeric:true}));
-    return values.map(value => ({value, label:definition.label ? definition.label(value) : value}));
+    const dependencySignature = regionalDependencySignatureFor(definition);
+    const cachedEntry = cachedRegionalOptionsByFilterId.get(definition.id);
+    if (cachedEntry?.signature === dependencySignature) return cachedEntry.options;
+    const otherActiveRegionalFilters = regionalFilterDefinitions.filter(
+      candidate => candidate.id !== definition.id && selectionFor(candidate.id) !== null,
+    );
+    const compatibleRows = otherActiveRegionalFilters.length
+      ? teamTteCells.filter(row => otherActiveRegionalFilters.every(candidate =>
+          rowMatchesDefinition(row, candidate, selectionFor(candidate.id)),
+        ))
+      : teamTteCells;
+    const values = [...new Set(compatibleRows.map(row => String(row[definition.field])))]
+      .sort((firstValue, secondValue) => firstValue.localeCompare(secondValue, "es", {numeric:true}));
+    const options = values.map(value => ({value, label:definition.label ? definition.label(value) : value}));
+    cachedRegionalOptionsByFilterId.set(definition.id, {signature:dependencySignature, options});
+    return options;
   }
 
   function selectionSummary(selection, options) {
@@ -331,7 +544,15 @@
     host.dataset.filterProvenance = "regional";
     host.innerHTML = `<div class="filter-control"><span class="filter-title">${escapeHtml(definition.title)}</span><details><summary>${selectionSummary(selection, options)}</summary><div class="filter-menu"><input class="filter-search" type="search" placeholder="Escriba el término de búsqueda" aria-label="Buscar ${escapeHtml(definition.title)}"><label class="filter-option filter-select-all"><input type="checkbox" data-team-tte-select-all ${allOptionsAreSelected ? "checked" : ""}>Todos</label><div>${options.map(option => `<label class="filter-option" data-team-tte-filter-option><input type="checkbox" value="${escapeHtml(option.value)}" ${(selection === null || selection.has(option.value)) ? "checked" : ""}>${escapeHtml(option.label)}</label>`).join("")}</div></div></details></div>`;
 
+    const details = host.querySelector("details");
     const searchInput = host.querySelector(".filter-search");
+    details.addEventListener("toggle", () => {
+      if (details.open && host.dataset.filterSignature !== regionalDependencySignatureFor(definition)) {
+        renderRegionalFilter(definition);
+        host.querySelector("details").open = true;
+      }
+    });
+    host.dataset.filterSignature = regionalDependencySignatureFor(definition);
     const selectAllInput = host.querySelector("[data-team-tte-select-all]");
     searchInput.addEventListener("input", () => {
       const searchText = searchInput.value.trim().toLocaleLowerCase();
@@ -339,7 +560,7 @@
         optionElement.hidden = !optionElement.textContent.toLocaleLowerCase().includes(searchText);
       });
     });
-    host.querySelector("details").addEventListener("change", event => {
+    details.addEventListener("change", event => {
       const allOptionValues = options.map(option => option.value);
       if (event.target === selectAllInput) {
         selectedValuesByFilterId.set(definition.id, selectAllInput.checked ? null : new Set());
@@ -353,7 +574,8 @@
           nextSelection.size === allOptionValues.length ? null : nextSelection,
         );
       }
-      renderAllRegionalFilters();
+      document.querySelectorAll(".filter-control details[open]").forEach(control => control.removeAttribute("open"));
+      renderRegionalFilter(definition);
       renderTeamTteDashboard();
     });
   }
@@ -363,7 +585,8 @@
   }
 
   function selectedRegionalCells() {
-    return teamTteCells.filter(row => regionalFilterDefinitions.every(definition =>
+    const activeRegionalFilters = regionalFilterDefinitions.filter(definition => selectionFor(definition.id) !== null);
+    return teamTteCells.filter(row => activeRegionalFilters.every(definition =>
       rowMatchesDefinition(row, definition, selectionFor(definition.id)),
     ));
   }
@@ -606,5 +829,8 @@
   const statusElement = document.getElementById("teamTteScopeDescription");
   if (statusElement) statusElement.textContent = "No fue posible cargar los datos de la vista Team TTE.";
 });
+    return initializationPromise;
+  };
+})();
 </script>
 </body></html>

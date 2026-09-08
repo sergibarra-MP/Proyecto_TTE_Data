@@ -19,9 +19,11 @@ Entender y documentar completamente las diferencias y similitudes entre el dashb
 
 | Dominio | Fuente oficial actual | Uso |
 |---|---|---|
-| HC, bajas e ingresos (Directos y Externos) | `KPI_LATAM_NC_TO_ALL` | Fuente única para HC, tipos y motivos de baja, Área, Subárea y Site; Directos homologados contra Nómina Shipping 2024–2026. |
-| Ausentismo | `KPI_LATAM_HYPER_ABS` | Dotación, tipos y motivos de ausentismo, Área, Subárea, Site. |
+| HC, bajas e ingresos (Directos y Externos) | `NOMINA_ALL` (tabla física `KPI_LATAM_NC_TO_ALL`) | Fuente única para HC, tipos y motivos de baja, Área, Subárea y Site; Directos homologados contra Nómina Shipping 2024–2026. |
+| Ausentismo | `HYPER_ABS` (tabla física `KPI_LATAM_HYPER_ABS`) | Dotación, tipos y motivos de ausentismo, Área, Subárea, Site. |
 | Clasificador | `TTE_REG_CLASSIFICADOR` | Región y Tipo de operación. |
+
+Convención de nombres: en este proyecto `NOMINA_ALL` identifica funcionalmente a la tabla física `meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL`.
 
 ## Grano de información publicado
 
@@ -33,7 +35,7 @@ También se conservan series mensuales por motivo de ausentismo y motivo de baja
 
 ## Capacidades ya incorporadas
 
-- Filtros dependientes: Año, Mes, Región, Área, Subárea, Tipo de operación, Site y Segmento.
+- Filtros dependientes: Año, Mes, Región, Área, Subárea, Tipo de operación, Site y Segmento. Cada menú se recalcula contra el resto de filtros activos, excluyéndose a sí mismo para permitir modificar su selección.
 - Filtros multiselección: Tipo de baja y Tipo de ausentismo.
 - Gráficas mensuales de Ausentismo y Turnover.
 - Comparativos CDBR vs. No CDBR.
@@ -128,4 +130,29 @@ La vista regional se implementó como línea paralela y no como join contra las 
 
 **Diferencia de corte:** la tabla vigente contiene 18.259 eventos de turnover; la captura muestra 18.283. La diferencia de 24 eventos debe rastrearse como actualización temporal de la fuente, no corregirse manualmente.
 
-**Pendiente para homologar:** reconciliar por mes y dimensión los numeradores, denominadores, exclusiones y temporalidad contra KPI/HYPER ABS. Que una dimensión exista en la tabla regional no prueba por sí solo que sea canónica para el dashboard unificado.
+**Pendiente para homologar:** reconciliar por mes y dimensión los numeradores, denominadores, exclusiones y temporalidad contra NOMINA_ALL/HYPER_ABS. Que una dimensión exista en la tabla regional no prueba por sí solo que sea canónica para el dashboard unificado.
+## H-06 — Prototipo Homologado+TTE
+
+**Estado:** implementado como tercera pestaña experimental; la cobertura regional continúa abierta.
+
+Se creó `Overview_ABS-TO_Homologado+TTE` sin modificar las dos vistas anteriores. NOMINA_ALL/HYPER_ABS continúan siendo las únicas fuentes de métricas; la tabla TTE sólo incorpora atributos mediante `LEFT JOIN` temporal.
+
+**Reglas de protección:** foto regional más reciente del mes para HC; match diario exacto para altas, bajas y ABS; externos y registros sin correspondencia etiquetados `Sin cobertura TTE`; Región homologada y Región TTE permanecen como campos distintos.
+
+**Prueba de no regresión:** al remover las dimensiones TTE y reagrupar por Año × Mes × Segmento, las diez métricas oficiales presentan cero diferencias. Los motivos de ausencia y baja también presentan cero diferencias.
+
+**Cobertura observada a 2026-09:** 34,5% de HC acumulado, 25,2% de dotación, 23,3% de ausentismo gestionable, 21,4% de renuncias y 22,6% de despidos. Por ello, las dimensiones regionales son útiles para explorar la población vinculada, pero todavía no deben interpretarse como cobertura completa del universo homologado.
+
+**Próxima investigación:** identificar por qué personas oficiales no aparecen en TTE y decidir si existen llaves alternativas válidas para ampliar cobertura sin introducir falsos positivos ni relaciones muchos-a-muchos.
+## H-07 — Los 12 Seniorities en Homologado+TTE
+
+**Estado:** implementado con ampliación controlada.
+
+NOMINA_ALL 2026 contiene coincidencias para las 12 categorías TTE y una equivalencia exacta entre `Agrupador_1` y `seniority` para las diez categorías adicionales. Se incorporan exclusivamente filas con match persona-periodo confirmado. HYPER_ABS sólo coincide con Non CDBR y Representantes - CDBR, por lo que no se publican métricas ABS para los otros Seniorities.
+
+La selección inicial conserva los dos Seniorities operativos y las categorías sin cobertura/información para mantener cero diferencias contra Homologado. Seleccionar Analista, Manager, Team Leader u otra categoría adicional amplía explícitamente el universo a métricas NOMINA_ALL enriquecidas.
+## H-08 — Melicidade fuera de alcance
+
+**Estado:** excluido en fuente.
+
+Por definición de negocio, `Melicidade` no pertenece al scope. Se incorporó a la lista centralizada de categorías operacionales excluidas y la condición se aplica a NOMINA_ALL mediante `TTE_REG_CLASSIFICADOR.Site` y a HYPER_ABS mediante `CAT_TA`. El HTML productivo presenta cero apariciones de Melicidade en Homologado y Homologado+TTE, manteniendo cero diferencias entre ambas vistas bajo la selección inicial de Seniority.

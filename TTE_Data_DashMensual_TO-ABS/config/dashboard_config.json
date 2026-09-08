@@ -9,7 +9,7 @@
     "tables": {
       "official_absenteeism": "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS",
       "location_catalog": "meli-people.SILVER_PE_SHIPPING.TTE_REG_CLASSIFICADOR",
-      "workforce_and_attrition": "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL",
+      "nomina_all": "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL",
       "team_tte_regional_base": "meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER"
     }
   },
@@ -26,7 +26,8 @@
     "absenteeism_reason_to_exclude": "N/A",
     "operational_categories_to_exclude": [
       "Melitl\u00e1n",
-      "Citicenter"
+      "Citicenter",
+      "Melicidade"
     ],
     "temporarily_excluded_locations": [
       "SC - SIM\u00d5ES FILHO SBA9",

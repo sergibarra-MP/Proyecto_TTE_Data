@@ -45,7 +45,7 @@ def build_official_source_queries() -> dict[str, str]:
     supervisor_directory_join_for_workforce = f"""LEFT JOIN (
   SELECT Ano, Mes, CAST(ID_de_usuario_empleado AS STRING) AS employee_id,
          ANY_VALUE(NULLIF(UPPER(TRIM(Nombre_de_usuario)), '')) AS supervisor_username
-  FROM `{TABLES['workforce_and_attrition']}`
+  FROM `{TABLES['nomina_all']}`
   WHERE Ano = @reporting_year AND Mes BETWEEN 1 AND @last_calendar_month
     AND Pais_Region = @country_name
   GROUP BY 1,2,3
@@ -63,13 +63,14 @@ def build_official_source_queries() -> dict[str, str]:
   source.Tipo AS record_type, source.tipoBaja AS attrition_type,
   source.motivosDeSalida AS attrition_reason,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
-FROM `{TABLES['workforce_and_attrition']}` AS source
+FROM `{TABLES['nomina_all']}` AS source
 {location_join_for_workforce}
 {supervisor_directory_join_for_workforce}
 WHERE {common_month_window}
   AND source.Pais_Region = @country_name
   AND source.Agrupador_1 IN UNNEST(@direct_source_groups)
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
+  AND (location_catalog.Site IS NULL OR location_catalog.Site NOT IN UNNEST(@excluded_operational_categories))
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
 GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14""",
         "direct_hirings": f"""SELECT
@@ -78,13 +79,14 @@ GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14""",
   source.Agrupador_1 AS source_group, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp, COALESCE(NULLIF(TRIM(source.Posee_Discapacidad), ''), @unassigned_pcd_label) AS pcd, COALESCE(supervisor_directory.supervisor_username, @unassigned_supervisor_label) AS supervisor,
   location_catalog.Region AS region, location_catalog.Site AS operation_type,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
-FROM `{TABLES['workforce_and_attrition']}` AS source
+FROM `{TABLES['nomina_all']}` AS source
 {location_join_for_workforce}
 {supervisor_directory_join_for_workforce}
 WHERE source.Pais_Region = @country_name
   AND source.Agrupador_1 IN UNNEST(@direct_source_groups)
   AND EXTRACT(YEAR FROM source.Datos_Laborales_Fecha_de_contratacion) = @reporting_year
   AND EXTRACT(MONTH FROM source.Datos_Laborales_Fecha_de_contratacion) BETWEEN 1 AND @last_calendar_month
+  AND (location_catalog.Site IS NULL OR location_catalog.Site NOT IN UNNEST(@excluded_operational_categories))
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
 GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
         "external_headcount_and_attrition": f"""SELECT
@@ -92,12 +94,13 @@ GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
   location_catalog.Region AS region, location_catalog.Site AS operation_type, source.Tipo AS record_type,
   source.tipoBaja AS attrition_type, source.motivosDeSalida AS attrition_reason,
   COUNT(*) AS value
-FROM `{TABLES['workforce_and_attrition']}` AS source
+FROM `{TABLES['nomina_all']}` AS source
 {location_join_for_workforce}
 WHERE {common_month_window}
   AND source.Pais_Region = @country_name
   AND source.Agrupador_1 = @external_source_group
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
+  AND (location_catalog.Site IS NULL OR location_catalog.Site NOT IN UNNEST(@excluded_operational_categories))
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
 GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13""",
         "absenteeism": f"""SELECT

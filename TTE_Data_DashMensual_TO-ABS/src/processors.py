@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from data_loader import BUSINESS_RULES, SCOPE, UNASSIGNED_PBP_LABEL
+from data_loader import BUSINESS_RULES, SCOPE, UNASSIGNED_PBP_LABEL, UNASSIGNED_PCD_LABEL, UNASSIGNED_SUPERVISOR_LABEL
 
 ATTRITION_METRIC_BY_SOURCE_TYPE = {"Renuncia": "resignations", "Despido": "dismissals", "Abandono de empleo": "abandonments", "No cuenta": "not_counted_attrition"}
 NUMERIC_METRIC_NAMES = ("headcount", "hirings", "resignations", "dismissals", "abandonments", "not_counted_attrition", "scheduled_workforce", "manageable_absenteeism", "non_manageable_absenteeism", "other_absenteeism")
@@ -22,13 +22,13 @@ def resolve_dashboard_segment(source_group: str, is_external_employee: bool = Fa
 
 def build_cube_cell_key(source_row: dict[str, Any], segment: str) -> tuple[Any, ...]:
     """Define el grano publicado: mes × segmento × Región × Tipo de operación."""
-    return (int(source_row["year"]), int(source_row["month"]), segment, str(source_row.get("region") or "Sin especificar"), str(source_row.get("operation_type") or "Sin especificar"), str(source_row.get("site_operativo") or "Sin especificar"), str(source_row.get("area") or "Sin especificar"), str(source_row.get("subarea") or "Sin especificar"), str(source_row.get("pbp") or UNASSIGNED_PBP_LABEL))
+    return (int(source_row["year"]), int(source_row["month"]), segment, str(source_row.get("region") or "Sin especificar"), str(source_row.get("operation_type") or "Sin especificar"), str(source_row.get("site_operativo") or "Sin especificar"), str(source_row.get("area") or "Sin especificar"), str(source_row.get("subarea") or "Sin especificar"), str(source_row.get("pbp") or UNASSIGNED_PBP_LABEL), str(source_row.get("pcd") or UNASSIGNED_PCD_LABEL), str(source_row.get("supervisor") or UNASSIGNED_SUPERVISOR_LABEL))
 
 
 def create_empty_cube_cell(dimension_key: tuple[Any, ...]) -> dict[str, Any]:
     """Inicializa todas las métricas aditivas, evitando nulos en el HTML."""
-    year, month, segment, region, operation_type, site_operativo, area, subarea, pbp = dimension_key
-    return {"year": year, "month": month, "segment": segment, "region": region, "operationType": operation_type, "siteOperativo": site_operativo, "area": area, "subarea": subarea, "pbp": pbp, **{metric_name: 0.0 for metric_name in NUMERIC_METRIC_NAMES}}
+    year, month, segment, region, operation_type, site_operativo, area, subarea, pbp, pcd, supervisor = dimension_key
+    return {"year": year, "month": month, "segment": segment, "region": region, "operationType": operation_type, "siteOperativo": site_operativo, "area": area, "subarea": subarea, "pbp": pbp, "pcd": pcd, "supervisor": supervisor, **{metric_name: 0.0 for metric_name in NUMERIC_METRIC_NAMES}}
 
 
 def add_metric(cells_by_key: dict[tuple[Any, ...], dict[str, Any]], source_row: dict[str, Any], segment: str, metric_name: str, value: Any) -> None:
@@ -54,7 +54,7 @@ def compile_monthly_reason_series(source_results_by_query_name: dict[str, list[d
     reason_cells: list[dict[str, Any]] = []
 
     def dimensions(source_row: dict[str, Any], segment: str) -> dict[str, Any]:
-        return {"year": int(source_row["year"]), "month": int(source_row["month"]), "segment": segment, "region": str(source_row.get("region") or "Sin especificar"), "operationType": str(source_row.get("operation_type") or "Sin especificar"), "siteOperativo": str(source_row.get("site_operativo") or "Sin especificar"), "area": str(source_row.get("area") or "Sin especificar"), "subarea": str(source_row.get("subarea") or "Sin especificar"), "pbp": str(source_row.get("pbp") or UNASSIGNED_PBP_LABEL)}
+        return {"year": int(source_row["year"]), "month": int(source_row["month"]), "segment": segment, "region": str(source_row.get("region") or "Sin especificar"), "operationType": str(source_row.get("operation_type") or "Sin especificar"), "siteOperativo": str(source_row.get("site_operativo") or "Sin especificar"), "area": str(source_row.get("area") or "Sin especificar"), "subarea": str(source_row.get("subarea") or "Sin especificar"), "pbp": str(source_row.get("pbp") or UNASSIGNED_PBP_LABEL), "pcd": str(source_row.get("pcd") or UNASSIGNED_PCD_LABEL), "supervisor": str(source_row.get("supervisor") or UNASSIGNED_SUPERVISOR_LABEL)}
 
     def add_attrition_reason(source_row: dict[str, Any], segment: str) -> None:
         if source_row.get("attrition_type") == "No cuenta" and source_row.get("attrition_reason") == BUSINESS_RULES["excluded_unspecified_attrition_reason"]:
@@ -100,4 +100,4 @@ def compile_monthly_dashboard_cube(source_results_by_query_name: dict[str, list[
             continue
         for source_metric_name, cube_metric_name in (("scheduled_workforce", "scheduled_workforce"), ("manageable_absenteeism", "manageable_absenteeism"), ("non_manageable_absenteeism", "non_manageable_absenteeism"), ("other_absenteeism", "other_absenteeism")):
             add_metric(cells_by_key, source_row, segment, cube_metric_name, source_row[source_metric_name])
-    return sorted(cells_by_key.values(), key=lambda cell: (cell["year"], cell["month"], cell["segment"], cell["region"], cell["operationType"], cell["siteOperativo"], cell["area"], cell["subarea"], cell["pbp"]))
+    return sorted(cells_by_key.values(), key=lambda cell: (cell["year"], cell["month"], cell["segment"], cell["region"], cell["operationType"], cell["siteOperativo"], cell["area"], cell["subarea"], cell["pbp"], cell["pcd"], cell["supervisor"]))

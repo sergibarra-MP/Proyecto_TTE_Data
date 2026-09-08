@@ -26,6 +26,8 @@ TABLES = DASHBOARD_CONFIGURATION["bigquery"]["tables"]
 SCOPE = DASHBOARD_CONFIGURATION["scope"]
 BUSINESS_RULES = DASHBOARD_CONFIGURATION["business_rules"]
 UNASSIGNED_PBP_LABEL = BUSINESS_RULES["unassigned_pbp_label"]
+UNASSIGNED_PCD_LABEL = BUSINESS_RULES["unassigned_pcd_label"]
+UNASSIGNED_SUPERVISOR_LABEL = BUSINESS_RULES["unassigned_supervisor_label"]
 # Límite preventivo de lectura por consulta (aprox. USD 1).
 MAXIMUM_BYTES_BILLED_PER_QUERY = 160 * 1024 * 1024 * 1024
 
@@ -40,39 +42,53 @@ def build_official_source_queries() -> dict[str, str]:
   ON source.Pais_region = location_catalog.Pais_Region
  AND UPPER(TRIM(source.ubicacion)) = UPPER(TRIM(location_catalog.Ubicacion__Nombre))"""
 
+    supervisor_directory_join_for_workforce = f"""LEFT JOIN (
+  SELECT Ano, Mes, CAST(ID_de_usuario_empleado AS STRING) AS employee_id,
+         ANY_VALUE(NULLIF(UPPER(TRIM(Nombre_de_usuario)), '')) AS supervisor_username
+  FROM `{TABLES['workforce_and_attrition']}`
+  WHERE Ano = @reporting_year AND Mes BETWEEN 1 AND @last_calendar_month
+    AND Pais_Region = @country_name
+  GROUP BY 1,2,3
+) AS supervisor_directory
+  ON source.Ano = supervisor_directory.Ano
+ AND source.Mes = supervisor_directory.Mes
+ AND CAST(source.ID_de_sistema_del_usuario_lider AS STRING) = supervisor_directory.employee_id"""
+
     common_month_window = "source.Ano = @reporting_year AND source.Mes BETWEEN 1 AND @last_calendar_month"
     return {
         "direct_headcount_and_attrition": f"""SELECT
   source.Ano AS year, source.Mes AS month, source.Agrupador_1 AS source_group,
-  UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp, location_catalog.Region AS region,
+  UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp, COALESCE(NULLIF(TRIM(source.Posee_Discapacidad), ''), @unassigned_pcd_label) AS pcd, COALESCE(supervisor_directory.supervisor_username, @unassigned_supervisor_label) AS supervisor, location_catalog.Region AS region,
   location_catalog.Site AS operation_type,
   source.Tipo AS record_type, source.tipoBaja AS attrition_type,
   source.motivosDeSalida AS attrition_reason,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
 FROM `{TABLES['workforce_and_attrition']}` AS source
 {location_join_for_workforce}
+{supervisor_directory_join_for_workforce}
 WHERE {common_month_window}
   AND source.Pais_Region = @country_name
   AND source.Agrupador_1 IN UNNEST(@direct_source_groups)
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14""",
         "direct_hirings": f"""SELECT
   EXTRACT(YEAR FROM source.Datos_Laborales_Fecha_de_contratacion) AS year,
   EXTRACT(MONTH FROM source.Datos_Laborales_Fecha_de_contratacion) AS month,
-  source.Agrupador_1 AS source_group, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp,
+  source.Agrupador_1 AS source_group, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp, COALESCE(NULLIF(TRIM(source.Posee_Discapacidad), ''), @unassigned_pcd_label) AS pcd, COALESCE(supervisor_directory.supervisor_username, @unassigned_supervisor_label) AS supervisor,
   location_catalog.Region AS region, location_catalog.Site AS operation_type,
   COUNT(DISTINCT source.ID_de_usuario_empleado) AS value
 FROM `{TABLES['workforce_and_attrition']}` AS source
 {location_join_for_workforce}
+{supervisor_directory_join_for_workforce}
 WHERE source.Pais_Region = @country_name
   AND source.Agrupador_1 IN UNNEST(@direct_source_groups)
   AND EXTRACT(YEAR FROM source.Datos_Laborales_Fecha_de_contratacion) = @reporting_year
   AND EXTRACT(MONTH FROM source.Datos_Laborales_Fecha_de_contratacion) BETWEEN 1 AND @last_calendar_month
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5,6,7,8,9""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
         "external_headcount_and_attrition": f"""SELECT
-  source.Ano AS year, source.Mes AS month, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp,
+  source.Ano AS year, source.Mes AS month, UPPER(TRIM(source.Ubicacion__Nombre)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.People_Business_Partner__People_BP_Supervisores_Adicionales_Nombre)), ''), @unassigned_pbp_label) AS pbp, COALESCE(NULLIF(TRIM(source.Posee_Discapacidad), ''), @unassigned_pcd_label) AS pcd, @unassigned_supervisor_label AS supervisor,
   location_catalog.Region AS region, location_catalog.Site AS operation_type, source.Tipo AS record_type,
   source.tipoBaja AS attrition_type, source.motivosDeSalida AS attrition_reason,
   COUNT(*) AS value
@@ -83,10 +99,10 @@ WHERE {common_month_window}
   AND source.Agrupador_1 = @external_source_group
   AND source.Tipo IN ('Headcount Historico', 'Headcount Actual', 'Bajas')
   AND UPPER(TRIM(source.Ubicacion__Nombre)) NOT IN UNNEST(@excluded_location_names)
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13""",
         "absenteeism": f"""SELECT
   source.Ano AS year, source.Mes AS month, source.Agrupador_1 AS source_group,
-  source.colaborador_externo AS external_employee, UPPER(TRIM(source.ubicacion)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.Pbp)), ''), @unassigned_pbp_label) AS pbp,
+  source.colaborador_externo AS external_employee, UPPER(TRIM(source.ubicacion)) AS site_operativo, source.Area AS area, source.Subarea AS subarea, COALESCE(NULLIF(UPPER(TRIM(source.Pbp)), ''), @unassigned_pbp_label) AS pbp, COALESCE(NULLIF(TRIM(source.Posee_Discapacidad), ''), @unassigned_pcd_label) AS pcd, CASE WHEN source.colaborador_externo = @external_employee_flag THEN @unassigned_supervisor_label ELSE COALESCE(NULLIF(UPPER(TRIM(source.Supervisor)), ''), @unassigned_supervisor_label) END AS supervisor,
   location_catalog.Region AS region, CASE WHEN source.CAT_TA = 'No MAP' AND UPPER(TRIM(source.ubicacion)) IN ('BRES01', 'BRPR01') THEN 'Full'
        ELSE source.CAT_TA END AS operation_type,
   source.Motivo_ausentismo AS absenteeism_reason,
@@ -102,7 +118,7 @@ WHERE {common_month_window}
   AND source.CAT_TA NOT IN UNNEST(@excluded_operational_categories)
   AND UPPER(TRIM(source.ubicacion)) NOT IN UNNEST(@excluded_location_names)
   AND (source.colaborador_externo = @external_employee_flag OR source.Agrupador_1 IN UNNEST(@direct_source_groups))
-GROUP BY 1,2,3,4,5,6,7,8,9,10,11""",
+GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13""",
     }
 
 
@@ -124,6 +140,8 @@ def load_source_results_from_bigquery(reporting_year: int, last_calendar_month: 
         bigquery.ScalarQueryParameter("external_employee_flag", "STRING", SCOPE["external_employee_flag"]),
         bigquery.ScalarQueryParameter("excluded_absenteeism_reason", "STRING", BUSINESS_RULES["absenteeism_reason_to_exclude"]),
         bigquery.ScalarQueryParameter("unassigned_pbp_label", "STRING", UNASSIGNED_PBP_LABEL),
+        bigquery.ScalarQueryParameter("unassigned_pcd_label", "STRING", UNASSIGNED_PCD_LABEL),
+        bigquery.ScalarQueryParameter("unassigned_supervisor_label", "STRING", UNASSIGNED_SUPERVISOR_LABEL),
         bigquery.ArrayQueryParameter("excluded_operational_categories", "STRING", BUSINESS_RULES["operational_categories_to_exclude"]),
         bigquery.ArrayQueryParameter("excluded_location_names", "STRING", BUSINESS_RULES["temporarily_excluded_locations"]),
     ]

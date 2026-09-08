@@ -10,12 +10,38 @@
     header { background:var(--ink); color:white; padding:18px max(24px,calc((100vw - 1400px)/2)); border-bottom:6px solid var(--meli-yellow); }
     h1 { margin:0; font-size:25px; } header p { margin:5px 0 0; color:#d7dce1; font-size:14px; }
     main { max-width:1400px; margin:20px auto 38px; padding:0 20px; }
+    .dashboard-view-tabs { background:#fff; border-bottom:1px solid var(--line); display:flex; justify-content:center; gap:8px; padding:10px 20px 0; position:sticky; top:0; z-index:20; }
+    .dashboard-view-tab { background:transparent; color:#475467; border-radius:0; padding:10px 15px; border-bottom:3px solid transparent; }
+    .dashboard-view-tab[aria-selected="true"] { color:#1267d6; border-bottom-color:#1267d6; }
+    .dashboard-view[hidden] { display:none; }
+    .team-tte-title-banner { background:var(--meli-yellow); border-radius:12px; min-height:84px; display:grid; grid-template-columns:1fr auto; align-items:center; padding:14px 34px; margin-bottom:12px; box-shadow:0 1px 3px #00000025; }
+    .team-tte-title-banner h2 { text-align:center; font-size:38px; color:#3f4145; margin:0; }
+    .team-tte-title-banner p { text-align:center; font-size:12px; font-weight:700; margin:0; }
+    .team-tte-title-banner time { display:block; margin-top:7px; font-size:13px; font-weight:400; }
+    .team-tte-source-note { background:#fffbea; border-left:4px solid #d6b900; border-radius:5px; padding:9px 12px; color:#665600; font-size:12px; margin-bottom:12px; }
+    .team-tte-filters { grid-template-columns:repeat(6,minmax(0,1fr)); }
+    .team-tte-filters > #teamTteResetFiltersButton { grid-column:1 / -1; width:min(210px,100%); }
+    .team-tte-period-summary { min-width:0; display:grid; gap:5px; color:#806600; font-size:12px; font-weight:700; }
+    .team-tte-period-summary strong { min-height:37px; display:flex; align-items:center; padding:8px; overflow:hidden; border:1px solid #ecd984; border-radius:6px; background:#fffbea; color:var(--ink); font-weight:400; white-space:nowrap; text-overflow:ellipsis; }
+    .team-tte-kpis { grid-template-columns:repeat(8,minmax(0,1fr)); }
+    .team-tte-kpis .kpi { min-height:98px; padding:10px 7px; }
+    .team-tte-kpis .kpi strong { font-size:23px; }
+    .team-tte-kpis .kpi span { background:#fff; border-radius:10px; }
+    @media(max-width:1200px){ .team-tte-kpis{grid-template-columns:repeat(4,1fr)} }
+    @media(max-width:900px){ .team-tte-filters{grid-template-columns:repeat(3,1fr)} }
+    @media(max-width:700px){ .team-tte-title-banner{grid-template-columns:1fr;padding:12px}.team-tte-title-banner h2{font-size:28px}.team-tte-filters,.team-tte-kpis{grid-template-columns:1fr 1fr} }
     .scope-note { background:#fff8ce; border-left:4px solid var(--meli-yellow); border-radius:5px; padding:10px 14px; color:#554b00; font-size:13px; margin-bottom:14px; }
     .filters, .chart-panel, .table-panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; box-shadow:0 1px 2px #00000008; }
     .filters { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; padding:15px; align-items:end; }
+    .filters > #resetFiltersButton { grid-column:1 / -1; width:min(210px,100%); }
     label { min-width:0; font-size:12px; font-weight:700; color:var(--muted); display:grid; gap:5px; } select { width:100%; min-width:0; border:1px solid #c8ced5; border-radius:6px; min-height:37px; padding:0 8px; background:#fff; color:var(--ink); }
     button { border:0; border-radius:6px; background:var(--ink); color:#fff; min-height:37px; font-weight:700; cursor:pointer; } .multi-filter { font-size:12px; font-weight:700; color:var(--muted); display:grid; gap:5px; min-width:0; } .multi-select { position:relative; } .multi-select summary { list-style:none; min-height:37px; padding:9px 32px 9px 8px; border:1px solid #c8ced5; border-radius:6px; background:#fff; color:var(--ink); font-weight:400; cursor:pointer; position:relative; } .multi-select summary::-webkit-details-marker { display:none; } .multi-select summary::after { content:"▼"; position:absolute; right:10px; color:#667085; font-size:10px; } .multi-select[open] summary { border-bottom-left-radius:0; border-bottom-right-radius:0; } .multi-select-options { position:absolute; z-index:5; top:100%; left:0; min-width:100%; width:max-content; max-width:280px; padding:8px 0; background:#fff; border:1px solid #c8ced5; border-radius:0 0 6px 6px; box-shadow:0 8px 18px #00000022; } .multi-select-options label { display:flex; grid-template-columns:none; align-items:center; gap:6px; padding:7px 10px; font-size:12px; color:#344054; cursor:pointer; } .multi-select-options label:hover { background:#f3f5f7; } .multi-select-options input { accent-color:#123b66; }
-    .filter-host { min-width:0; }
+    .filter-provenance-legend { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding:2px 0 1px; color:#475467; font-size:12px; }
+    .filter-provenance-legend strong { color:#344054; } .filter-provenance-item { display:inline-flex; align-items:center; gap:5px; } .filter-provenance-swatch { width:12px; height:12px; border-radius:3px; border:1px solid transparent; }
+    .filter-provenance-swatch.centralized { background:#e9f3ff; border-color:#9bc5ef; } .filter-provenance-swatch.regional { background:#fff8d6; border-color:#ead071; }
+    .filter-host { min-width:0; } .filter-host[data-filter-provenance="centralized"] .filter-title { color:#245a8d; } .filter-host[data-filter-provenance="centralized"] summary { background:#f3f8fe; border-color:#b8d4ef; }
+    /* Preparado para dimensiones que se incorporen desde una fuente regional no homologada. */
+    .filter-host[data-filter-provenance="regional"] .filter-title { color:#806600; } .filter-host[data-filter-provenance="regional"] summary { background:#fffbea; border-color:#ecd984; }
     .filter-control { display:grid; gap:5px; min-width:0; font-size:12px; font-weight:700; color:var(--muted); position:relative; }
     .filter-control summary { list-style:none; min-height:37px; padding:9px 32px 9px 8px; border:1px solid #c8ced5; border-radius:6px; background:#fff; color:var(--ink); font-weight:400; cursor:pointer; position:relative; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .filter-control summary::-webkit-details-marker { display:none; } .filter-control summary::after { content:"▼"; position:absolute; right:10px; color:#667085; font-size:10px; }
@@ -38,10 +64,15 @@
 </head>
 <body>
 <header><h1 id="dashboardTitle">People Analytics TTE Brasil</h1><p id="dashboardSubtitle"></p></header>
-<main>
-  <div class="scope-note">Primera versión con fuentes oficiales: no incluye targets ni dimensiones organizacionales sin una fuente validada.</div>
+<nav class="dashboard-view-tabs" aria-label="Vistas del dashboard">
+  <button class="dashboard-view-tab" type="button" data-dashboard-view="homologatedDashboardView" aria-selected="true">Overview_ABS-TO_Homologado</button>
+  <button class="dashboard-view-tab" type="button" data-dashboard-view="teamTteDashboardView" aria-selected="false">Overview_ABS-TO_TeamTTE</button>
+</nav>
+<main id="homologatedDashboardView" class="dashboard-view">
+  <div class="scope-note">Vista homologada con fuentes centralizadas oficiales; sus cálculos permanecen independientes de la fuente regional Team TTE.</div>
   <section class="filters" aria-label="Filtros del dashboard">
-    <div class="filter-host" data-filter-id="yearFilter"></div><div class="filter-host" data-filter-id="monthFilter"></div><div class="filter-host" data-filter-id="regionFilter"></div><div class="filter-host" data-filter-id="areaFilter"></div><div class="filter-host" data-filter-id="subareaFilter"></div><div class="filter-host" data-filter-id="operationFilter"></div><div class="filter-host" data-filter-id="attritionType"></div><div class="filter-host" data-filter-id="siteFilter"></div><div class="filter-host" data-filter-id="pbpFilter"></div><div class="filter-host" data-filter-id="segmentFilter"></div><div class="filter-host" data-filter-id="absenceType"></div>
+    <div class="filter-provenance-legend" aria-label="Origen de filtros"><strong>Origen de filtros:</strong><span class="filter-provenance-item"><i class="filter-provenance-swatch centralized"></i>Fuente centralizada homologada</span><span class="filter-provenance-item"><i class="filter-provenance-swatch regional"></i>Futura fuente regional por validar</span></div>
+    <div class="filter-host" data-filter-id="yearFilter"></div><div class="filter-host" data-filter-id="monthFilter"></div><div class="filter-host" data-filter-id="regionFilter"></div><div class="filter-host" data-filter-id="areaFilter"></div><div class="filter-host" data-filter-id="subareaFilter"></div><div class="filter-host" data-filter-id="operationFilter"></div><div class="filter-host" data-filter-id="attritionType"></div><div class="filter-host" data-filter-id="siteFilter"></div><div class="filter-host" data-filter-id="pbpFilter"></div><div class="filter-host" data-filter-id="pcdFilter"></div><div class="filter-host" data-filter-id="supervisorFilter"></div><div class="filter-host" data-filter-id="segmentFilter"></div><div class="filter-host" data-filter-id="absenceType"></div>
     <button id="resetFiltersButton" type="button">Restablecer filtros</button>
   </section>
   <div class="updated" id="scopeDescription"></div>
@@ -60,10 +91,52 @@
   </section>
   <section class="dashboard-grid comparison-grid"><article class="chart-panel"><h2>Ausentismo gestionable</h2><p class="chart-subtitle">Tasa mensual por población / Dotación programada</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>No CDBR</span></div><div class="bar-chart" id="absenteeismComparisonChart"></div></article><article class="chart-panel"><h2>Turnover</h2><p class="chart-subtitle">Renuncia, Abandono y Despido / HC mensual</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>No CDBR</span></div><div class="bar-chart" id="turnoverComparisonChart"></div></article></section>
   <section class="dashboard-grid comparison-grid"><article class="chart-panel"><h2>Ausentismo - Motivos</h2><p class="chart-subtitle">Top 4 motivos por tasa mensual</p><div class="legend" id="absenceReasonsLegend"></div><div class="line-chart" id="absenceReasonsChart"></div></article><article class="chart-panel"><h2>Turnover - Tipo de baja</h2><p class="chart-subtitle">Tasa mensual por tipo de baja</p><div class="legend" id="attritionReasonsLegend"></div><div class="line-chart" id="attritionReasonsChart"></div></article></section></main>
+<main id="teamTteDashboardView" class="dashboard-view" hidden>
+  <section class="team-tte-title-banner">
+    <h2>Transporte Brasil</h2>
+    <p>Atualizado em:<time id="teamTteSourceUpdateDate">—</time></p>
+  </section>
+  <div class="team-tte-source-note">Vista regional construida exclusivamente desde <code>meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER</code>. No implica homologación con la vista centralizada.</div>
+  <section class="filters team-tte-filters" aria-label="Filtros de la vista Team TTE">
+    <div class="team-tte-period-summary"><span>Periodo</span><strong id="teamTteAutomaticPeriod">Periodo automático</strong></div>
+    <div class="filter-host" data-team-tte-filter-id="teamTteYearFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteMonthFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTtePbpFilter"></div>
+    <div class="filter-host" data-team-tte-filter-id="teamTteCampaignFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteDirectorFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteManagerFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteN3Filter"></div>
+    <div class="filter-host" data-team-tte-filter-id="teamTteRegionFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteTier4Filter"></div><div class="filter-host" data-team-tte-filter-id="teamTteTier5Filter"></div><div class="filter-host" data-team-tte-filter-id="teamTteTier6Filter"></div>
+    <div class="filter-host" data-team-tte-filter-id="teamTteLocationFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteAreaFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteSubareaFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteRoleFilter"></div>
+    <div class="filter-host" data-team-tte-filter-id="teamTteSeniorityFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteStatusFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTtePcdFilter"></div><div class="filter-host" data-team-tte-filter-id="teamTteInssFilter"></div>
+    <button id="teamTteResetFiltersButton" type="button">Restablecer filtros</button>
+  </section>
+  <div class="updated" id="teamTteScopeDescription"></div>
+  <section class="kpis team-tte-kpis">
+    <article class="kpi"><small>HC Medio</small><strong id="teamTteAverageHeadcount">—</strong><span id="teamTteDistinctPeople">—</span></article>
+    <article class="kpi"><small>ABS Gestionable</small><strong id="teamTteManageableAbsenceRate">—</strong><span id="teamTteManageableAbsenceVolume">—</span></article>
+    <article class="kpi"><small>Turnover ACM</small><strong id="teamTteTurnoverRate">—</strong><span id="teamTteTurnoverVolume">—</span></article>
+    <article class="kpi"><small>TO Meta ACM</small><strong id="teamTteTurnoverTargetRate">—</strong><span id="teamTteTurnoverTargetVolume">—</span></article>
+    <article class="kpi"><small>Renuncia ACM</small><strong id="teamTteResignationRate">—</strong><span id="teamTteResignationVolume">—</span></article>
+    <article class="kpi"><small>Despido ACM</small><strong id="teamTteDismissalRate">—</strong><span id="teamTteDismissalVolume">—</span></article>
+    <article class="kpi"><small>Abandono</small><strong id="teamTteAbandonmentRate">—</strong><span id="teamTteAbandonmentVolume">—</span></article>
+    <article class="kpi"><small>Share CDBR</small><strong id="teamTteCdbrShare">—</strong><span id="teamTteCdbrPeople">—</span></article>
+  </section>
+  <section class="dashboard-grid">
+    <article class="chart-panel"><h2>Absenteísmo Gestionavel</h2><p class="chart-subtitle">Tipos de ausentismo / Dotação programada</p><div class="legend"><span><i style="background:#082f56"></i>ABS Gestionavel</span><span><i style="background:#b6ba00"></i>ABS Não Gestionavel</span><span><i style="background:#111"></i>ABS Outros</span></div><div class="bar-chart" id="teamTteAbsenceChart"></div></article>
+    <article class="chart-panel"><h2>Turnover</h2><p class="chart-subtitle">Despido y Renuncia / HC mensual distinto</p><div class="legend"><span><i style="background:#b6ba00"></i>Despido</span><span><i style="background:#111"></i>Renuncia</span></div><div class="bar-chart" id="teamTteTurnoverChart"></div></article>
+  </section>
+  <section class="dashboard-grid comparison-grid">
+    <article class="chart-panel"><h2>Absenteísmo</h2><p class="chart-subtitle">Gestionable por Seniority / Dotação de la misma población</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>Non CDBR</span></div><div class="bar-chart" id="teamTteAbsenceComparisonChart"></div></article>
+    <article class="chart-panel"><h2>Turnover</h2><p class="chart-subtitle">Bajas por Seniority / personas distintas de la misma población</p><div class="legend"><span><i style="background:#bf1d22"></i>CDBR</span><span><i style="background:#398e43"></i>Non CDBR</span></div><div class="bar-chart" id="teamTteTurnoverComparisonChart"></div></article>
+  </section>
+  <section class="dashboard-grid comparison-grid">
+    <article class="chart-panel"><h2>Absenteísmo - Motivos</h2><p class="chart-subtitle">Cinco motivos definidos por Team TTE / Dotação programada</p><div class="legend" id="teamTteAbsenceReasonLegend"></div><div class="line-chart" id="teamTteAbsenceReasonChart"></div></article>
+    <article class="chart-panel"><h2>Turnover - Motivos</h2><p class="chart-subtitle">Despido y Renuncia / personas distintas mensuales</p><div class="legend" id="teamTteTurnoverReasonLegend"></div><div class="line-chart" id="teamTteTurnoverReasonChart"></div></article>
+  </section>
+</main>
 <script>/* DASHBOARD_DATA_PLACEHOLDER */</script>
 <script>
-(() => {
-  const data = window.DASHBOARD_DATA;
+(async () => {
+  // Los datos permanecen dentro del HTML, comprimidos para que miles de supervisores no multipliquen el peso publicado.
+  const compressedPayloadBytes = Uint8Array.from(atob(window.HOMOLOGATED_DASHBOARD_DATA_GZIP_BASE64), character => character.charCodeAt(0));
+  const decompressedPayloadStream = new Blob([compressedPayloadBytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+  const data = JSON.parse(await new Response(decompressedPayloadStream).text());
   const monthNames = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
   const metricNames = ["headcount","hirings","resignations","dismissals","abandonments","not_counted_attrition","scheduled_workforce","manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"];
   const element = id => document.getElementById(id);
@@ -77,6 +150,7 @@
     {id:"subareaFilter",title:"Subárea",field:"subarea",label:String}, {id:"operationFilter",title:"Tipo de operación",field:"operationType",label:String},
     {id:"attritionType",title:"Tipo de baja",options:[{value:"resignations",label:"Renuncia"},{value:"abandonments",label:"Abandono"},{value:"dismissals",label:"Despido"},{value:"not_counted_attrition",label:"No cuenta"}]},
     {id:"siteFilter",title:"Site",field:"siteOperativo",label:String}, {id:"pbpFilter",title:"PBP",field:"pbp",label:String},
+    {id:"pcdFilter",title:"PCD",field:"pcd",label:String}, {id:"supervisorFilter",title:"Supervisor",field:"supervisor",label:String},
     {id:"segmentFilter",title:"Segmento",field:"segment",label:String},
     {id:"absenceType",title:"Tipo de ausentismo",options:[{value:"manageable_absenteeism",label:"Gestionable"},{value:"non_manageable_absenteeism",label:"No gestionable"},{value:"other_absenteeism",label:"Otros"}]}
   ];
@@ -93,6 +167,8 @@
   const summaryFor=(selection,options)=>selection===null||selection.size===options.length?"Todos seleccionados":selection.size?`${selection.size} seleccionados`:"Ninguno seleccionado";
   function renderFilter(definition, changedId) {
     const host=document.querySelector(`[data-filter-id="${definition.id}"]`), options=optionsFor(definition,changedId), existing=selectedFor(definition.id);
+    // Todo filtro actual usa una fuente centralizada homologada. Los futuros filtros regionales declararán provenance:"regional".
+    host.dataset.filterProvenance=definition.provenance||"centralized";
     const compatible=existing===null?null:new Set([...existing].filter(value=>options.some(option=>option.value===value))); selectedByFilterId.set(definition.id,compatible);
     const selection=selectedFor(definition.id), allSelected=selection===null||selection.size===options.length;
     host.innerHTML=`<div class="filter-control"><span class="filter-title">${escapeHtml(definition.title)}</span><details><summary>${summaryFor(selection,options)}</summary><div class="filter-menu"><input class="filter-search" type="search" placeholder="Escriba el término de búsqueda" aria-label="Buscar ${escapeHtml(definition.title)}"><label class="filter-option filter-select-all"><input type="checkbox" data-select-all ${allSelected?"checked":""}>Todos</label><div>${options.map(option=>`<label class="filter-option" data-filter-option><input type="checkbox" value="${escapeHtml(option.value)}" ${(selection===null||selection.has(option.value))?"checked":""}>${escapeHtml(option.label)}</label>`).join("")}</div></div></details></div>`;
@@ -156,6 +232,379 @@
   }
   function renderDashboard() { const cells=selectedCells(), rows=monthlyAggregates(cells), absenteeismComparisonRows=monthlyComparisonRates(cells,["manageable_absenteeism"],"scheduled_workforce"), turnoverComparisonRows=monthlyComparisonRates(cells,["resignations","abandonments","dismissals"],"headcount"); updateKpis(cells); renderStackedBars("absenteeismChart",rows,["manageable_absenteeism","non_manageable_absenteeism","other_absenteeism"],"scheduled_workforce",["#123b66","#b2b900","#151515"],month=>monthNames[month-1]); renderStackedBars("turnoverChart",rows,["resignations","abandonments","dismissals","not_counted_attrition"],"headcount",["#d5d9df","#aeb7c2","#6d7886","#1d1d1d"],month=>monthNames[month-1]); renderComparisonBars("absenteeismComparisonChart",absenteeismComparisonRows); renderComparisonBars("turnoverComparisonChart",turnoverComparisonRows); renderReasonLines("absenceReasonsChart","absence"); renderReasonLines("attritionReasonsChart","attrition"); element("scopeDescription").textContent=`Brasil · ${cells.length} celdas agregadas · Segmento: ${summaryFor(selectedFor("segmentFilter"), optionsFor(definitionById.get("segmentFilter")))} · Mes: ${summaryFor(selectedFor("monthFilter"), optionsFor(definitionById.get("monthFilter")))}`; }
   initialiseFilters(); renderDashboard();
-})();
+})().catch(error => {
+  console.error("No fue posible cargar los datos embebidos del dashboard.", error);
+  document.getElementById("scopeDescription").textContent = "No fue posible cargar los datos del dashboard.";
+});
+</script>
+<script>
+(async () => {
+  const viewButtons = [...document.querySelectorAll("[data-dashboard-view]")];
+  viewButtons.forEach(button => button.addEventListener("click", () => {
+    viewButtons.forEach(candidate => {
+      const isSelected = candidate === button;
+      candidate.setAttribute("aria-selected", String(isSelected));
+      document.getElementById(candidate.dataset.dashboardView).hidden = !isSelected;
+    });
+    history.replaceState(null, "", `#${button.dataset.dashboardView}`);
+  }));
+  const requestedViewButton = viewButtons.find(button => `#${button.dataset.dashboardView}` === window.location.hash);
+  if (requestedViewButton) requestedViewButton.click();
+
+  const compressedRegionalPayloadBytes = Uint8Array.from(
+    atob(window.TEAM_TTE_DASHBOARD_DATA_GZIP_BASE64),
+    character => character.charCodeAt(0),
+  );
+  const decompressedRegionalPayloadStream = new Blob([compressedRegionalPayloadBytes])
+    .stream()
+    .pipeThrough(new DecompressionStream("gzip"));
+  const teamTteData = JSON.parse(await new Response(decompressedRegionalPayloadStream).text());
+  const teamTteCells = teamTteData.cells || [];
+  const monthNames = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
+  const element = identifier => document.getElementById(identifier);
+  const formatInteger = value => new Intl.NumberFormat("pt-BR", {maximumFractionDigits:0}).format(Number(value) || 0);
+  const formatPercentage = ratio => Number.isFinite(ratio)
+    ? `${(ratio * 100).toLocaleString("pt-BR", {minimumFractionDigits:1, maximumFractionDigits:1})}%`
+    : "—";
+  const safeRate = (numerator, denominator) => denominator ? numerator / denominator : Number.NaN;
+  const escapeHtml = text => String(text).replace(/[&<>'"]/g, character => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[character]));
+
+  const regionalFilterDefinitions = [
+    {id:"teamTteYearFilter", title:"Año", field:"year", initial:[String(teamTteData.reportingYear)]},
+    {id:"teamTteMonthFilter", title:"Mes", field:"month", label:value=>`${monthNames[Number(value)-1]} ${teamTteData.reportingYear}`},
+    {id:"teamTtePbpFilter", title:"PBP", field:"peopleBusinessPartner"},
+    {id:"teamTteCampaignFilter", title:"Campaña", field:"campaign"},
+    {id:"teamTteDirectorFilter", title:"Director", field:"director"},
+    {id:"teamTteManagerFilter", title:"Gerente", field:"manager"},
+    {id:"teamTteN3Filter", title:"N3", field:"n3"},
+    {id:"teamTteRegionFilter", title:"Región", field:"region"},
+    {id:"teamTteTier4Filter", title:"Tier 4", field:"tier4"},
+    {id:"teamTteTier5Filter", title:"Tier 5", field:"tier5"},
+    {id:"teamTteTier6Filter", title:"Tier 6", field:"tier6"},
+    {id:"teamTteLocationFilter", title:"Localidade", field:"location"},
+    {id:"teamTteAreaFilter", title:"Área", field:"area"},
+    {id:"teamTteSubareaFilter", title:"Subárea", field:"subarea"},
+    {id:"teamTteRoleFilter", title:"Cargo", field:"role"},
+    {id:"teamTteSeniorityFilter", title:"Seniority", field:"seniority", initial:teamTteData.initialSeniorityValues},
+    {id:"teamTteStatusFilter", title:"Status", field:"historicalStatus", initial:teamTteData.initialHistoricalStatusValues},
+    {id:"teamTtePcdFilter", title:"PCD", field:"pcd"},
+    {id:"teamTteInssFilter", title:"INSS", field:"inss"},
+  ];
+  const selectedValuesByFilterId = new Map(
+    regionalFilterDefinitions.map(definition => [
+      definition.id,
+      definition.initial ? new Set(definition.initial.map(String)) : null,
+    ]),
+  );
+  const selectionFor = filterIdentifier => selectedValuesByFilterId.get(filterIdentifier);
+  const rowMatchesDefinition = (row, definition, selection) => selection === null || selection.has(String(row[definition.field]));
+
+  function filteredCellsIgnoringOneDefinition(ignoredFilterIdentifier) {
+    return teamTteCells.filter(row => regionalFilterDefinitions.every(definition =>
+      definition.id === ignoredFilterIdentifier || rowMatchesDefinition(row, definition, selectionFor(definition.id)),
+    ));
+  }
+
+  function availableOptionsFor(definition) {
+    const values = [...new Set(
+      filteredCellsIgnoringOneDefinition(definition.id).map(row => String(row[definition.field])),
+    )].sort((firstValue, secondValue) => firstValue.localeCompare(secondValue, "es", {numeric:true}));
+    return values.map(value => ({value, label:definition.label ? definition.label(value) : value}));
+  }
+
+  function selectionSummary(selection, options) {
+    if (selection === null || selection.size === options.length) return "Todos seleccionados";
+    if (!selection.size) return "Ninguno seleccionado";
+    return `${selection.size} seleccionados`;
+  }
+
+  function renderRegionalFilter(definition) {
+    const host = document.querySelector(`[data-team-tte-filter-id="${definition.id}"]`);
+    const options = availableOptionsFor(definition);
+    const existingSelection = selectionFor(definition.id);
+    const compatibleSelection = existingSelection === null ? null : new Set(
+      [...existingSelection].filter(selectedValue => options.some(option => option.value === selectedValue)),
+    );
+    selectedValuesByFilterId.set(definition.id, compatibleSelection);
+    const selection = selectionFor(definition.id);
+    const allOptionsAreSelected = selection === null || selection.size === options.length;
+    host.dataset.filterProvenance = "regional";
+    host.innerHTML = `<div class="filter-control"><span class="filter-title">${escapeHtml(definition.title)}</span><details><summary>${selectionSummary(selection, options)}</summary><div class="filter-menu"><input class="filter-search" type="search" placeholder="Escriba el término de búsqueda" aria-label="Buscar ${escapeHtml(definition.title)}"><label class="filter-option filter-select-all"><input type="checkbox" data-team-tte-select-all ${allOptionsAreSelected ? "checked" : ""}>Todos</label><div>${options.map(option => `<label class="filter-option" data-team-tte-filter-option><input type="checkbox" value="${escapeHtml(option.value)}" ${(selection === null || selection.has(option.value)) ? "checked" : ""}>${escapeHtml(option.label)}</label>`).join("")}</div></div></details></div>`;
+
+    const searchInput = host.querySelector(".filter-search");
+    const selectAllInput = host.querySelector("[data-team-tte-select-all]");
+    searchInput.addEventListener("input", () => {
+      const searchText = searchInput.value.trim().toLocaleLowerCase();
+      host.querySelectorAll("[data-team-tte-filter-option]").forEach(optionElement => {
+        optionElement.hidden = !optionElement.textContent.toLocaleLowerCase().includes(searchText);
+      });
+    });
+    host.querySelector("details").addEventListener("change", event => {
+      const allOptionValues = options.map(option => option.value);
+      if (event.target === selectAllInput) {
+        selectedValuesByFilterId.set(definition.id, selectAllInput.checked ? null : new Set());
+      } else {
+        const nextSelection = selectionFor(definition.id) === null
+          ? new Set(allOptionValues)
+          : new Set(selectionFor(definition.id));
+        event.target.checked ? nextSelection.add(event.target.value) : nextSelection.delete(event.target.value);
+        selectedValuesByFilterId.set(
+          definition.id,
+          nextSelection.size === allOptionValues.length ? null : nextSelection,
+        );
+      }
+      renderAllRegionalFilters();
+      renderTeamTteDashboard();
+    });
+  }
+
+  function renderAllRegionalFilters() {
+    regionalFilterDefinitions.forEach(renderRegionalFilter);
+  }
+
+  function selectedRegionalCells() {
+    return teamTteCells.filter(row => regionalFilterDefinitions.every(definition =>
+      rowMatchesDefinition(row, definition, selectionFor(definition.id)),
+    ));
+  }
+
+  const numericMetricNames = [
+    "scheduled_population", "manageable_absence", "non_manageable_absence", "other_absence",
+    "monthly_headcount_indicator", "total_turnover", "resignations", "dismissals",
+    "not_counted_turnover", "turnover_target", "job_abandonments", "reason_illness",
+    "reason_unjustified_absence", "reason_leader_permission", "reason_medical_service_permission",
+    "reason_suspension_sanction",
+  ];
+
+  function aggregateRegionalMetrics(rows) {
+    const totals = Object.fromEntries(numericMetricNames.map(metricName => [metricName, 0]));
+    rows.forEach(row => numericMetricNames.forEach(metricName => {
+      totals[metricName] += Number(row[metricName] || 0);
+    }));
+    return totals;
+  }
+
+  function distinctConsumerCount(rows, requiredSeniority) {
+    return new Set(
+      rows
+        .filter(row => !requiredSeniority || row.seniority === requiredSeniority)
+        .map(row => row.consumerId),
+    ).size;
+  }
+
+  function calculateAverageSnapshotHeadcount(rows) {
+    const selectedMonthKeys = new Set(rows.map(row => `${row.year}-${row.month}`));
+    if (!selectedMonthKeys.size) return Number.NaN;
+    const snapshotPersonMonthKeys = new Set(
+      rows
+        .filter(row => Number(row.is_in_average_headcount_snapshot || 0) > 0)
+        .map(row => `${row.consumerId}|${row.year}|${row.month}`),
+    );
+    return snapshotPersonMonthKeys.size / selectedMonthKeys.size;
+  }
+
+  function monthlyRegionalAggregates(rows) {
+    const monthKeys = [...new Set(rows.map(row => `${row.year}-${String(row.month).padStart(2, "0")}`))].sort();
+    return monthKeys.map(monthKey => {
+      const [year, month] = monthKey.split("-").map(Number);
+      const monthRows = rows.filter(row => row.year === year && row.month === month);
+      return {
+        year,
+        month,
+        rows:monthRows,
+        distinctPeople:distinctConsumerCount(monthRows),
+        ...aggregateRegionalMetrics(monthRows),
+      };
+    });
+  }
+
+  function renderRegionalKpis(rows) {
+    const totals = aggregateRegionalMetrics(rows);
+    const averageHeadcount = calculateAverageSnapshotHeadcount(rows);
+    const distinctPeople = distinctConsumerCount(rows);
+    const cdbrPeople = distinctConsumerCount(rows, "Representantes - CDBR");
+    element("teamTteAverageHeadcount").textContent = Number.isFinite(averageHeadcount) ? formatInteger(averageHeadcount) : "—";
+    element("teamTteDistinctPeople").textContent = formatInteger(distinctPeople);
+    element("teamTteManageableAbsenceRate").textContent = formatPercentage(safeRate(totals.manageable_absence, totals.scheduled_population));
+    element("teamTteManageableAbsenceVolume").textContent = formatInteger(totals.manageable_absence);
+    element("teamTteTurnoverRate").textContent = formatPercentage(safeRate(totals.total_turnover, averageHeadcount));
+    element("teamTteTurnoverVolume").textContent = formatInteger(totals.total_turnover);
+    element("teamTteTurnoverTargetRate").textContent = formatPercentage(safeRate(totals.turnover_target, averageHeadcount));
+    element("teamTteTurnoverTargetVolume").textContent = formatInteger(totals.turnover_target);
+    element("teamTteResignationRate").textContent = formatPercentage(safeRate(totals.resignations, averageHeadcount));
+    element("teamTteResignationVolume").textContent = formatInteger(totals.resignations);
+    element("teamTteDismissalRate").textContent = formatPercentage(safeRate(totals.dismissals, averageHeadcount));
+    element("teamTteDismissalVolume").textContent = formatInteger(totals.dismissals);
+    element("teamTteAbandonmentRate").textContent = formatPercentage(safeRate(totals.job_abandonments, totals.dismissals));
+    element("teamTteAbandonmentVolume").textContent = formatInteger(totals.job_abandonments);
+    element("teamTteCdbrShare").textContent = formatPercentage(safeRate(cdbrPeople, distinctPeople));
+    element("teamTteCdbrPeople").textContent = formatInteger(cdbrPeople);
+  }
+
+  function renderRegionalStackedBars(containerIdentifier, monthlyRows, components, denominatorResolver, colors) {
+    const container = element(containerIdentifier);
+    if (!monthlyRows.length) {
+      container.innerHTML = '<div class="empty">No hay datos para los filtros seleccionados.</div>';
+      return;
+    }
+    const componentRatesByMonth = monthlyRows.map(monthRow => components.map(component =>
+      safeRate(Number(monthRow[component] || 0), denominatorResolver(monthRow)),
+    ));
+    const maximumTotalRate = Math.max(
+      ...componentRatesByMonth.map(rates => rates.reduce((sum, rate) => sum + (Number.isFinite(rate) ? rate : 0), 0)),
+      0.01,
+    );
+    container.innerHTML = monthlyRows.map((monthRow, monthIndex) => {
+      const componentRates = componentRatesByMonth[monthIndex];
+      const totalRate = componentRates.reduce((sum, rate) => sum + (Number.isFinite(rate) ? rate : 0), 0);
+      const stackHeight = Math.max(totalRate / maximumTotalRate * 90, 0.5);
+      const bars = componentRates.map((componentRate, componentIndex) => {
+        const componentHeight = totalRate ? componentRate / totalRate * 100 : 0;
+        const label = componentRate > 0 ? `<span class="bar-component-label" style="color:#fff">${formatPercentage(componentRate)}</span>` : "";
+        return `<div class="bar" style="height:${componentHeight}%;background:${colors[componentIndex]}">${label}</div>`;
+      }).join("");
+      return `<div class="bar-group"><div class="stack-wrapper" style="height:${stackHeight}%"><div class="stack">${bars}</div></div><span class="bar-label">${monthNames[monthRow.month-1]} '${String(monthRow.year).slice(-2)}</span></div>`;
+    }).join("");
+  }
+
+  function calculateMonthlyComparisonRates(rows, family) {
+    return monthlyRegionalAggregates(rows).map(monthRow => {
+      const rateForSeniority = seniorityValue => {
+        const seniorityRows = monthRow.rows.filter(row => row.seniority === seniorityValue);
+        if (family === "absence") {
+          const totals = aggregateRegionalMetrics(seniorityRows);
+          return safeRate(totals.manageable_absence, totals.scheduled_population);
+        }
+        return safeRate(aggregateRegionalMetrics(seniorityRows).total_turnover, distinctConsumerCount(seniorityRows));
+      };
+      return {
+        year:monthRow.year,
+        month:monthRow.month,
+        cdbr:rateForSeniority("Representantes - CDBR"),
+        nonCdbr:rateForSeniority("Non CDBR"),
+      };
+    });
+  }
+
+  function renderRegionalComparisonBars(containerIdentifier, comparisonRows) {
+    const container = element(containerIdentifier);
+    if (!comparisonRows.length) {
+      container.innerHTML = '<div class="empty">No hay datos para los filtros seleccionados.</div>';
+      return;
+    }
+    const maximumStackedRate = Math.max(...comparisonRows.map(row =>
+      (Number.isFinite(row.cdbr) ? row.cdbr : 0) + (Number.isFinite(row.nonCdbr) ? row.nonCdbr : 0),
+    ), 0.01);
+    const series = [{key:"cdbr", color:"#bf1d22"}, {key:"nonCdbr", color:"#398e43"}];
+    container.innerHTML = comparisonRows.map(row => {
+      const totalRate = series.reduce((sum, item) => sum + (Number.isFinite(row[item.key]) ? row[item.key] : 0), 0);
+      const bars = series.map(item => {
+        const value = Number.isFinite(row[item.key]) ? row[item.key] : 0;
+        return `<div class="bar" style="height:${totalRate ? value / totalRate * 100 : 0}%;background:${item.color}">${value ? `<span class="bar-component-label" style="color:#fff">${formatPercentage(value)}</span>` : ""}</div>`;
+      }).join("");
+      return `<div class="bar-group"><div class="stack-wrapper" style="height:${Math.max(totalRate / maximumStackedRate * 90, 0.5)}%"><div class="stack">${bars}</div></div><span class="bar-label">${monthNames[row.month-1]} '${String(row.year).slice(-2)}</span></div>`;
+    }).join("");
+  }
+
+  function renderRegionalLineChart(containerIdentifier, legendIdentifier, monthlyRows, seriesDefinitions, denominatorResolver) {
+    const container = element(containerIdentifier);
+    if (!monthlyRows.length) {
+      container.innerHTML = '<div class="empty">No hay datos para los filtros seleccionados.</div>';
+      element(legendIdentifier).innerHTML = "";
+      return;
+    }
+    const series = seriesDefinitions.map(definition => ({
+      ...definition,
+      points:monthlyRows.map(monthRow => ({
+        month:monthRow.month,
+        year:monthRow.year,
+        value:safeRate(Number(monthRow[definition.metric] || 0), denominatorResolver(monthRow)),
+      })),
+    }));
+    const width=600, height=270, left=42, right=8, top=28, bottom=30;
+    const maximumValue=Math.max(...series.flatMap(item=>item.points.map(point=>Number.isFinite(point.value)?point.value:0)),0.01)*1.15;
+    const x=index=>left+index*(width-left-right)/Math.max(monthlyRows.length-1,1);
+    const y=value=>height-bottom-value/maximumValue*(height-top-bottom);
+    const lines=series.map(item=>`<path d="M${item.points.map((point,index)=>`${x(index)},${y(Number.isFinite(point.value)?point.value:0)}`).join(" L")}" fill="none" stroke="${item.color}" stroke-width="2"/>${item.points.map((point,index)=>Number.isFinite(point.value)&&point.value?`<circle cx="${x(index)}" cy="${y(point.value)}" r="2.5" fill="${item.color}"></circle><text x="${x(index)}" y="${y(point.value)-7}" text-anchor="middle" class="line-value" fill="${item.color}">${formatPercentage(point.value)}</text>`:"").join("")}`).join("");
+    container.innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Serie mensual Team TTE">${lines}${monthlyRows.map((row,index)=>`<text x="${x(index)}" y="${height-6}" text-anchor="middle" class="line-label">${monthNames[row.month-1]}</text>`).join("")}</svg>`;
+    element(legendIdentifier).innerHTML=series.map(item=>`<span><i style="background:${item.color}"></i>${escapeHtml(item.label)}</span>`).join("");
+  }
+
+  function updateAutomaticPeriodDescription(rows) {
+    const availableMonthKeys = [...new Set(rows.map(row => `${row.year}-${String(row.month).padStart(2, "0")}`))].sort();
+    if (!availableMonthKeys.length) {
+      element("teamTteAutomaticPeriod").textContent = "Sin periodo disponible";
+      return;
+    }
+    const firstMonthKey = availableMonthKeys[0];
+    const lastMonthKey = availableMonthKeys[availableMonthKeys.length - 1];
+    const periodStartDate = `${firstMonthKey}-01`;
+    const [lastYear, lastMonth] = lastMonthKey.split("-").map(Number);
+    const lastDayOfMonth = new Date(Date.UTC(lastYear, lastMonth, 0)).getUTCDate();
+    const completeMonthEndDate = `${lastMonthKey}-${String(lastDayOfMonth).padStart(2, "0")}`;
+    const periodEndDate = (teamTteData.sourceMaximumDate || "").startsWith(lastMonthKey)
+      ? teamTteData.sourceMaximumDate
+      : completeMonthEndDate;
+    element("teamTteAutomaticPeriod").textContent = `Automático: ${periodStartDate} → ${periodEndDate}`;
+  }
+
+  function renderTeamTteDashboard() {
+    const rows = selectedRegionalCells();
+    const monthlyRows = monthlyRegionalAggregates(rows);
+    updateAutomaticPeriodDescription(rows);
+    renderRegionalKpis(rows);
+    renderRegionalStackedBars(
+      "teamTteAbsenceChart", monthlyRows,
+      ["manageable_absence", "non_manageable_absence", "other_absence"],
+      monthRow => monthRow.scheduled_population,
+      ["#082f56", "#b6ba00", "#111"],
+    );
+    renderRegionalStackedBars(
+      "teamTteTurnoverChart", monthlyRows,
+      ["dismissals", "resignations"],
+      monthRow => monthRow.distinctPeople,
+      ["#b6ba00", "#111"],
+    );
+    renderRegionalComparisonBars("teamTteAbsenceComparisonChart", calculateMonthlyComparisonRates(rows, "absence"));
+    renderRegionalComparisonBars("teamTteTurnoverComparisonChart", calculateMonthlyComparisonRates(rows, "turnover"));
+    renderRegionalLineChart(
+      "teamTteAbsenceReasonChart", "teamTteAbsenceReasonLegend", monthlyRows,
+      [
+        {metric:"reason_illness", label:"Enfermedad", color:"#b6ba00"},
+        {metric:"reason_unjustified_absence", label:"Ausencia Injustificada", color:"#082f56"},
+        {metric:"reason_leader_permission", label:"Permisos Líder", color:"#21486f"},
+        {metric:"reason_medical_service_permission", label:"Permiso Servicio Médico", color:"#f36f21"},
+        {metric:"reason_suspension_sanction", label:"Suspensión / Sanción", color:"#f5a000"},
+      ],
+      monthRow => monthRow.scheduled_population,
+    );
+    renderRegionalLineChart(
+      "teamTteTurnoverReasonChart", "teamTteTurnoverReasonLegend", monthlyRows,
+      [
+        {metric:"dismissals", label:"Despido", color:"#b6ba00"},
+        {metric:"resignations", label:"Renuncia", color:"#082f56"},
+      ],
+      monthRow => monthRow.distinctPeople,
+    );
+    element("teamTteScopeDescription").textContent = `Brasil · ${formatInteger(rows.length)} celdas persona-mes · ${formatInteger(distinctConsumerCount(rows))} personas distintas`;
+  }
+
+  const sourceMaximumDate = teamTteData.sourceMaximumDate || "";
+  element("teamTteSourceUpdateDate").textContent = sourceMaximumDate || "—";
+  renderAllRegionalFilters();
+  element("teamTteResetFiltersButton").addEventListener("click", () => {
+    regionalFilterDefinitions.forEach(definition => selectedValuesByFilterId.set(
+      definition.id,
+      definition.initial ? new Set(definition.initial.map(String)) : null,
+    ));
+    renderAllRegionalFilters();
+    renderTeamTteDashboard();
+  });
+  renderTeamTteDashboard();
+})().catch(error => {
+  console.error("No fue posible cargar la vista regional Team TTE.", error);
+  const statusElement = document.getElementById("teamTteScopeDescription");
+  if (statusElement) statusElement.textContent = "No fue posible cargar los datos de la vista Team TTE.";
+});
 </script>
 </body></html>

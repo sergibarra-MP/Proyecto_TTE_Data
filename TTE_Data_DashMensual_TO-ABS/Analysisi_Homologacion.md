@@ -116,3 +116,16 @@ La referencia Centralizado mostrada por el equipo no coincide, por ejemplo en en
 3. Registrar cada diferencia con numerador, denominador, población, fecha de corte y regla de exclusión.
 4. Acordar la definición canónica de cada métrica con el equipo local y el equipo Centralizado.
 5. Construir el dashboard único sólo después de cerrar las diferencias críticas, empezando por Turnover.
+## H-05 — Fuente regional Team TTE identificada
+
+**Estado:** fuente y lógica de la pestaña Overview confirmadas; homologación aún abierta.
+
+La vista `Overview_ABS-TO_TeamTTE` utiliza exclusivamente `meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER`. Esta fuente aporta jerarquía y dimensiones que no forman parte del cubo homologado: PBP, Campaña, Director, Gerente, N3, Tier 4–6, Localidade, Cargo, Seniority, Status, PCD e INSS.
+
+La vista regional se implementó como línea paralela y no como join contra las fuentes centrales. Esta decisión permite comparar números y definiciones sin contaminar la versión homologada.
+
+**Evidencia 2026 con filtros iniciales del Looker:** 48.334 personas distintas, 413.198 ausencias gestionables, 16.621 de meta, 8.061 renuncias, 8.973 despidos, 3.911 abandonos y 35.922 CDBR. La fórmula validada de HC Medio produce 21.465,22.
+
+**Diferencia de corte:** la tabla vigente contiene 18.259 eventos de turnover; la captura muestra 18.283. La diferencia de 24 eventos debe rastrearse como actualización temporal de la fuente, no corregirse manualmente.
+
+**Pendiente para homologar:** reconciliar por mes y dimensión los numeradores, denominadores, exclusiones y temporalidad contra KPI/HYPER ABS. Que una dimensión exista en la tabla regional no prueba por sí solo que sea canónica para el dashboard unificado.

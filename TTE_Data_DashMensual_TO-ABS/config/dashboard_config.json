@@ -1,43 +1,66 @@
 {
-    "dashboard":  {
-                      "title":  "People Analytics TTE Brasil",
-                      "subtitle":  "Ausentismo y Turn Over · Fuentes oficiales",
-                      "output_html_file":  "Dash_TTE_Brasil.html"
-                  },
-    "bigquery":  {
-                     "billing_project":  "meli-people",
-                     "tables":  {
-                                    "official_absenteeism":  "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS",
-                                    "location_catalog":  "meli-people.SILVER_PE_SHIPPING.TTE_REG_CLASSIFICADOR",
-                                    "workforce_and_attrition":  "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL"
-                                }
-                 },
-    "scope":  {
-                  "country":  "Brasil",
-                  "direct_source_groups":  {
-                                               "Determinado (CDBR)":  "Representantes - CDBR",
-                                               "Indeterminado":  "Representante"
-                                           },
-                  "external_source_group":  "Representante Externo",
-                  "external_employee_flag":  "Si"
-              },
-    "business_rules":  {
-                           "absenteeism_reason_to_exclude":  "N/A",
-                           "operational_categories_to_exclude":  [
-                                                                     "Melitlán",
-                                                                     "Citicenter"
-                                                                 ],
-                           "temporarily_excluded_locations":  [
-                                                                  "SC - SIMÕES FILHO SBA9",
-                                                                  "BELO HORIZONTE",
-                                                                  "SC - RIBEIRÃO PRETO SSP55",
-                                                                  "SC - SÃO BERNARDO CAMPO SSP52",
-                                                                  "FBM - SANTO ANDRÉ BRSP34"
-                                                              ],
-                           "absenteeism_reason_display_names":  {
-                                                                    "ART/ ACCIDENTES DE TRABAJO":  "INSS"
-                                                                },
-                           "excluded_unspecified_attrition_reason":  "Sin Especificar",
-                           "unassigned_pbp_label":  "Sin PBP informado"
-                       }
+  "dashboard": {
+    "title": "People Analytics TTE Brasil",
+    "subtitle": "Ausentismo y Turn Over \u00b7 Fuentes oficiales",
+    "output_html_file": "Dash_TTE_Brasil.html"
+  },
+  "bigquery": {
+    "billing_project": "meli-people",
+    "tables": {
+      "official_absenteeism": "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS",
+      "location_catalog": "meli-people.SILVER_PE_SHIPPING.TTE_REG_CLASSIFICADOR",
+      "workforce_and_attrition": "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL",
+      "team_tte_regional_base": "meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER"
+    }
+  },
+  "scope": {
+    "country": "Brasil",
+    "direct_source_groups": {
+      "Determinado (CDBR)": "Representantes - CDBR",
+      "Indeterminado": "Representante"
+    },
+    "external_source_group": "Representante Externo",
+    "external_employee_flag": "Si"
+  },
+  "business_rules": {
+    "absenteeism_reason_to_exclude": "N/A",
+    "operational_categories_to_exclude": [
+      "Melitl\u00e1n",
+      "Citicenter"
+    ],
+    "temporarily_excluded_locations": [
+      "SC - SIM\u00d5ES FILHO SBA9",
+      "BELO HORIZONTE",
+      "SC - RIBEIR\u00c3O PRETO SSP55",
+      "SC - S\u00c3O BERNARDO CAMPO SSP52",
+      "FBM - SANTO ANDR\u00c9 BRSP34"
+    ],
+    "absenteeism_reason_display_names": {
+      "ART/ ACCIDENTES DE TRABAJO": "INSS"
+    },
+    "excluded_unspecified_attrition_reason": "Sin Especificar",
+    "unassigned_pbp_label": "Sin PBP informado",
+    "unassigned_pcd_label": "Sin PCD informado",
+    "unassigned_supervisor_label": "Sin Supervisor informado"
+  },
+  "team_tte": {
+    "first_available_year": 2024,
+    "initial_seniority_values": [
+      "Non CDBR",
+      "Representantes - CDBR"
+    ],
+    "initial_historical_status_values": [
+      "ativo",
+      "historico",
+      "transferido"
+    ],
+    "excluded_historical_status_value": "purga",
+    "absence_reasons": [
+      "enfermedad",
+      "ausencia injustificada",
+      "permisos l\u00edder",
+      "permiso servicio m\u00e9dico",
+      "suspension/sanci\u00f3n"
+    ]
+  }
 }

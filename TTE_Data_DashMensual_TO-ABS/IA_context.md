@@ -1,6 +1,6 @@
 # IA_context.md — People Analytics TTE Brasil
 
-> Estado del documento: 2026-09-05  
+> Estado del documento: 2026-09-07
 > Alcance: primera versión del dashboard HTML de Ausentismo y Turn Over para Shipping Brasil.
 
 Este documento permite continuar el proyecto sin asumir fuentes, reglas o métricas que no estén respaldadas por la implementación y los datos oficiales actuales. Una instrucción explícita y posterior del usuario siempre prevalece sobre este contexto.
@@ -136,6 +136,8 @@ Filtros actualmente disponibles:
 - Tipo de operación.
 - Site operativo, normalizado como `UPPER(TRIM(Ubicacion__Nombre))` en KPI y `UPPER(TRIM(ubicacion))` en Ausentismo.
 - PBP, normalizado desde el campo oficial de cada fuente; los valores vacíos se publican como `Sin PBP informado`.
+- PCD, normalizado desde `Posee_Discapacidad` en Nómina/Turnover y Ausentismo; los valores vacíos se publican como `Sin PCD informado`.
+- Supervisor, homologado como login: Nómina/Turnover resuelve `ID_de_sistema_del_usuario_lider` contra `ID_de_usuario_empleado → Nombre_de_usuario` dentro de `KPI_LATAM_NC_TO_ALL`; Ausentismo utiliza `Supervisor`. Externos sin cobertura común se publican como `Sin Supervisor informado`.
 - Segmento: Total, Determinado (CDBR), Indeterminado o Externos.
 - Tipo de baja multiselección: Renuncia, Abandono, Despido y No cuenta.
 - Tipo de ausentismo multiselección: Gestionable, No gestionable y Otros.
@@ -151,17 +153,11 @@ Contenido:
 - Gráfica de líneas de Turnover por Tipo de baja, con colores estables: Despido verde oliva y Renuncia azul oscuro.
 - Las gráficas de detalle sólo muestran meses con datos disponibles; no dibujan futuros meses como cero.
 
-## 9. Fuera de alcance por ahora
+## 9. Separación de alcance vigente
 
-No se deben agregar hasta identificar y validar una fuente, un grano temporal y una regla de join:
+En `Overview_ABS-TO_Homologado` siguen fuera de alcance Director, Gerente, N3, Tier 4–6, Localidade, INSS, Campaña, Cargo, Seniority, Status y TO Meta ACM porque aún no pertenecen al contrato central homologado.
 
-- Director, Gerente, N3 y Tier 4–6.
-- PCD y Localidade.
-- INSS como filtro independiente.
-- Campaña, Cargo, Seniority y Status.
-- `TO Meta ACM` u otro target de Turn Over.
-
-La ausencia de estos campos en el HTML actual no demuestra que no existan en alguna tabla. Demuestra únicamente que aún no están incorporados al contrato de datos oficial de este proyecto.
+Esos campos sí se publican en `Overview_ABS-TO_TeamTTE` desde la tabla regional identificada. Su presencia en esa pestaña no implica que estén homologados ni autoriza unirlos silenciosamente a las fuentes centrales.
 
 ## 10. Ejecución
 
@@ -222,3 +218,86 @@ El objetivo final es disponer de un único dashboard con una sola versión traza
 ## 15. Migración a fuente única para fuerza laboral y bajas
 
 Desde 2026-09-07, HC, bajas e ingresos usan únicamente KPI_LATAM_NC_TO_ALL para Directos y Externos. La equivalencia de Directos contra Nómina Shipping fue validada por llave Año × Mes × Tipo × Agrupador_1 × ID en 2024–2026, sin registros exclusivos ni diferencias en Área, Subárea, ubicación, PBP, fecha de contratación o clasificación de bajas. Nómina queda fuera del flujo productivo y sólo puede consultarse como referencia de homologación o para historia previa a 2024.
+
+## 16. Segunda vista: Overview_ABS-TO_TeamTTE
+
+Desde 2026-09-07 el mismo HTML contiene dos pestañas con contratos independientes:
+
+- `Overview_ABS-TO_Homologado`: conserva las fuentes centralizadas y la lógica anterior.
+- `Overview_ABS-TO_TeamTTE`: reproduce la página regional desde una sola fuente, sin mezclarla con el cubo homologado.
+
+Fuente exclusiva de la vista regional:
+
+`meli-people.SILVER_PE_SHIPPING.TTE_BRASIL_TABELA_BASE_PEOPLEBUSINESSPARTNER`
+
+La tabla tiene 122 columnas físicas, 8.094.786 filas al corte 2026-09-07 y cobertura entre 2024-01-01 y 2026-09-07. No está particionada ni clusterizada. Por año contiene 1.270.456 filas en 2024, 2.793.704 en 2025 y 4.030.626 en 2026. Dentro del alcance inicial 2026, la llave `data_completa × consumer_id` es única: 3.590.324 llaves y cero duplicados.
+
+Para que el HTML siga siendo portable, `team_tte_data_loader.py` agrega la fuente al grano:
+
+`persona × año × mes × combinación de dimensiones regionales`
+
+El payload multianual contiene 428.154 celdas persona-mes. Conserva `consumer_id`, por lo que los conteos distintos se recalculan después de filtrar; las métricas diarias se conservan como sumas aditivas.
+
+### 16.1 Filtros regionales y campos físicos
+
+| Filtro | Campo de la tabla regional |
+|---|---|
+| Año / Mes | `ano` / `mes` |
+| PBP | `people_business_partner` |
+| Campaña | `campana` |
+| Director | `diretor` |
+| Gerente | `gerente` |
+| N3 | `n3` |
+| Tier 4 / 5 / 6 | `tier4` / `tier5` / `tier6` |
+| Región | `regiao` |
+| Localidade | `localidade` |
+| Área / Subárea | `area` / `subarea` |
+| Cargo | `cargo` |
+| Seniority | `seniority` |
+| Status | `status_historico` |
+| PCD | `pcd` |
+| INSS | `afastado_inss` |
+
+El filtro INSS no usa `inss`: esa columna es numérica y corresponde al dominio de costos. `afastado_inss` es la dimensión binaria `nao/sim` observada en Looker.
+
+Las opciones se obtienen de los datos y son dependientes. No hay listas manuales para Cargo ni Seniority. El estado inicial replica los filtros de página del Looker:
+
+- Año: `2026`; 2024 y 2025 permanecen disponibles.
+- Seniority: `Non CDBR` y `Representantes - CDBR`; la tabla contiene 12 categorías.
+- Status: `ativo`, `historico` y `transferido`; `purga` permanece disponible pero sin seleccionar.
+
+El control `Periodo` de Looker es un rango diario. La primera versión HTML muestra el rango automático real y lo actualiza con Año/Mes, pero no permite un corte arbitrario por día: hacerlo exactamente exigiría publicar millones de filas diarias o una estrategia adicional de sketches para conteos distintos.
+
+### 16.2 Métricas regionales confirmadas
+
+| Tarjeta / gráfico | Regla regional |
+|---|---|
+| HC Medio | Conteo distinto de personas en ventanas de cierre mensuales / cantidad de meses. Para el mes actual usa los últimos 7 días; para meses cerrados usa día ≥28 en meses de 31 días, ≥27 en meses de 30 días y ≥25 en febrero. |
+| ABS Gestionable | `SUM(faltas_gestionaveis) / SUM(dotacao_programada)` |
+| Turnover ACM | `COUNTIF(tipo_turnover IS NOT NULL) / HC Medio` |
+| TO Meta ACM | `SUM(turnover_meta) / HC Medio` |
+| Renuncia ACM | `COUNTIF(tipo_turnover='Renuncia') / HC Medio` |
+| Despido ACM | `COUNTIF(tipo_turnover='Despido') / HC Medio` |
+| Abandono | `COUNTIF(motivo_saida='Abandono de emprego') / COUNTIF(tipo_turnover='Despido')` |
+| Share CDBR | Personas distintas con `seniority='Representantes - CDBR'` / personas distintas totales |
+| Barras ABS | Gestionable, no gestionable y otros / dotación programada mensual |
+| Barras TO | Despido y Renuncia / personas distintas mensuales |
+| Comparativo ABS | Gestionable de cada Seniority / dotación de ese mismo Seniority |
+| Comparativo TO | Bajas de cada Seniority / personas distintas de ese mismo Seniority |
+
+La fórmula exacta de HC Medio fue ejecutada contra BigQuery y devolvió `193.187 / 9 = 21.465,22`, mostrado como `21.465`.
+
+Al corte actual, siete tarjetas coinciden exactamente con la captura. Turnover ACM devuelve 18.259 y 85,1%, mientras la captura conserva 18.283 y 85,2%; la diferencia son 24 eventos entre cortes de datos, no una diferencia de fórmula.
+
+### 16.3 Módulos regionales
+
+- `src/team_tte_data_loader.py`: SQL exclusivo de la tabla regional.
+- `src/team_tte_processors.py`: contrato JSON regional y tipado explícito.
+- `src/builders.py`: comprime por separado los payloads Homologado y Team TTE.
+- `src/template_dashboard.html`: mantiene estados, filtros y renderizadores separados por pestaña.
+
+La generación productiva multianual es:
+
+```powershell
+.\.venv\Scripts\python.exe src\gen_dashboard.py --first-year 2024 --year 2026 --last-month 9
+```

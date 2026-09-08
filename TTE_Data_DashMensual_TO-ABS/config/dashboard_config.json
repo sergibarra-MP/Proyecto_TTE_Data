@@ -1,0 +1,43 @@
+{
+    "dashboard":  {
+                      "title":  "People Analytics TTE Brasil",
+                      "subtitle":  "Ausentismo y Turn Over · Fuentes oficiales",
+                      "output_html_file":  "Dash_TTE_Brasil.html"
+                  },
+    "bigquery":  {
+                     "billing_project":  "meli-people",
+                     "tables":  {
+                                    "official_absenteeism":  "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_HYPER_ABS",
+                                    "location_catalog":  "meli-people.SILVER_PE_SHIPPING.TTE_REG_CLASSIFICADOR",
+                                    "workforce_and_attrition":  "meli-people.SILVER_PE_SHIPPING.KPI_LATAM_NC_TO_ALL"
+                                }
+                 },
+    "scope":  {
+                  "country":  "Brasil",
+                  "direct_source_groups":  {
+                                               "Determinado (CDBR)":  "Representantes - CDBR",
+                                               "Indeterminado":  "Representante"
+                                           },
+                  "external_source_group":  "Representante Externo",
+                  "external_employee_flag":  "Si"
+              },
+    "business_rules":  {
+                           "absenteeism_reason_to_exclude":  "N/A",
+                           "operational_categories_to_exclude":  [
+                                                                     "Melitlán",
+                                                                     "Citicenter"
+                                                                 ],
+                           "temporarily_excluded_locations":  [
+                                                                  "SC - SIMÕES FILHO SBA9",
+                                                                  "BELO HORIZONTE",
+                                                                  "SC - RIBEIRÃO PRETO SSP55",
+                                                                  "SC - SÃO BERNARDO CAMPO SSP52",
+                                                                  "FBM - SANTO ANDRÉ BRSP34"
+                                                              ],
+                           "absenteeism_reason_display_names":  {
+                                                                    "ART/ ACCIDENTES DE TRABAJO":  "INSS"
+                                                                },
+                           "excluded_unspecified_attrition_reason":  "Sin Especificar",
+                           "unassigned_pbp_label":  "Sin PBP informado"
+                       }
+}
